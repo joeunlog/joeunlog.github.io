@@ -10,7 +10,7 @@
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/support/mixins/_layout.scss",
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/support/mixins/_buttons.scss",
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/support/mixins/_typography.scss",
-		"_sass/color_schemes/light.scss",
+		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/color_schemes/light.scss",
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/modules.scss",
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/vendor/normalize.scss/normalize.scss",
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/base.scss",
@@ -30,7 +30,7 @@
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/utilities/_lists.scss",
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/utilities/_spacing.scss",
 		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/print.scss",
-		"_sass/custom/custom.scss"
+		"C:/Ruby27-x64/lib/ruby/gems/2.7.0/gems/just-the-docs-0.3.3/_sass/custom/custom.scss"
 	],
 	"sourcesContent": [
 		"\n@import \"./support/support\";\n@import \"./color_schemes/light\";\n@import \"./modules\";\n@import \"./custom/custom\";\n\n\n",
