@@ -11,14 +11,14 @@
     "url": "/docs/group-test/1st-child.html",
     "relUrl": "/docs/group-test/1st-child.html"
   },"2": {
-    "doc": "test",
+    "doc": "hi",
     "title": "hi hello",
     "content": " ",
     "url": "/docs/hi.html",
     "relUrl": "/docs/hi.html"
   },"3": {
-    "doc": "test",
-    "title": "test",
+    "doc": "hi",
+    "title": "hi",
     "content": " ",
     "url": "/docs/hi.html",
     "relUrl": "/docs/hi.html"
