@@ -71,18 +71,60 @@
     "url": "/docs/daily-learning-log/20210329.html",
     "relUrl": "/docs/daily-learning-log/20210329.html"
   },"12": {
+    "doc": "2021-03-30",
+    "title": "2021-03-30",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210330.html",
+    "relUrl": "/docs/daily-learning-log/20210330.html"
+  },"13": {
+    "doc": "2021-03-30",
+    "title": "정규화표현식 주요 패턴",
+    "content": "- . : 한 글자, 영문자(대/소), 숫자, 특수문자, 공백(스페이스, 탭) (ex. '…….' : 어떤 글자든지 총 7글자 - [pattern]* : 패턴이 0번 이상 반복 - a* : '', 'a', 'aa', 'aaa', 'aaaaaaaaa', … - .* : '', '.', '..', '…', …. : 아무거나, 모든 문자들 (ex. semanage fcontext -a -t [타입] '/wwwroot(/.*)?' ) - [문자들의 집합] : 집합에 포함된 글자들 중 한글자 - [abc] : a, b, c 중 한 글자 - [a-z] : 소문자 중 한 글자 - [0-9] : 숫자 중 한 글자 - [a-z0-9] : 소문자, 숫자 중 한 글자 - [Nn]ice : Nice 혹은 nice - [^문자들의 집합] : 집합에 포함되지 않은 글자들 중 한 글자 - [^abc] : a, b, c를 제외한 글자들 중 한 글자 - [^0-9] : 숫자가 아닌 한 글자 - \\ : Escape Sequence. 메타문자를 일반특수문자로 변환 ",
+    "url": "/docs/daily-learning-log/20210330.html",
+    "relUrl": "/docs/daily-learning-log/20210330.html"
+  },"14": {
+    "doc": "2021-03-30",
+    "title": "grep 연습",
+    "content": "- n 글자로 시작하는 라인을 찾기 - grep '^n' datafile - 4로 끝나는 라인을 찾기 - grep '4$' datafile - grep TB Savage datafile 해보기 - TB를 Savage 파일과 datafile 파일에서 검색한다는 의미 - grep 'TB Savage' datafile 해보기 - TB Savage를 datafile 파일에서 검색한다는 의미 - 숫자 5 뒤에 점(.)이 들어있는 라인을 찾기 - grep '5\\.' datafile - 점 뒤에 숫자 5가 들어있는 라인을 찾기 - grep '\\.5' datafile - w 또는 e로 시작하는 라인을 찾기 - grep '^[we]' datafile - M이 포함되어 있지 않은 라인을 찾기 - grep -v 'M' datafile - grep '^[^M]*$' dafafile - 참고로, grep '[^M]' datafile 은 M이 아닌 한 글자가 포함되어 있는 라인을 찾는다는 의미라서 부적합 - 대문자 두 글자 뒤 공백 한 글자. 다시 대문자 한 글자가 들어있는 라인을 찾기 - grep '[A-Z][A-Z] [A-Z]' datafile : 공백 한 글자를 스페이스로만 인식함 (탭은 해당되지 않음) - grep '[[:upper:]][[:upper:]][::space:]][[:upper:]]' datafile - [[::]]와 같은 특수 정규표현식은 아래 링크 참조 - https://support.google.com/a/answer/1371415?hl=ko - s가 한 글자 이상 반복되는 라인을 찾기 - grep 'ss*' datafile ",
+    "url": "/docs/daily-learning-log/20210330.html",
+    "relUrl": "/docs/daily-learning-log/20210330.html"
+  },"15": {
+    "doc": "2021-03-30",
+    "title": "확장 정규화 표현식\t",
+    "content": "- 확장 정규화 표현식은 grep에서는 사용불가하며, egrep에서 사용 가능!! - egrep : 확장 정규화 표현식 사용, grep -E와 동일 - fgrep : 정규화 표현식을 사용하지 않음 (fixed grep), 패턴을 일반 특수문자로 처리, grep -F와 동일 - ( ) : 패턴이 적용되는 부분을 묶어주기 - [pattern]+ : 패턴이 1번 이상 반복 (ex. ss* = s+ ) - [pattern]? : 패턴이 없거나, 1번 포함 - abc? : ab, abc (c에만 ?가 적용됨) - (abc)? : abc, 아무것도 없음 - ex. semanage fcontext -a -t [타입] '/wwwroot(/.*)?' - [pattern1]\\|[pattern2] : or, 즉, 패턴 1 또는 패턴 2 (ex. [Nn]ice = (N\\|n)ice ) - [pattern]{ } : 패턴의 반복 횟수 지정 - [pattern]{n} : 패턴 n번 반복 - [pattern]{n,m} : 패턴이 n번 이상 m번 이하 반복 - [pattern]{n,} : 패턴이 n번 이상 반복 - [pattern]{,m} : 패턴이 m번 이하 반복 ",
+    "url": "/docs/daily-learning-log/20210330.html",
+    "relUrl": "/docs/daily-learning-log/20210330.html"
+  },"16": {
+    "doc": "2021-03-30",
+    "title": "egrep 연습\t",
+    "content": "- NW 또는 EA 패턴을 검색 - egrep '(NW\\|EA)' datafile - 숫자 3이 1번 이상 반복 - egrep '3+' datafile - 2.x 또는 2x 패턴이 들어있는 라인 - egrep '2\\.?[0-9]' datafile - no 패턴이 1번 이상 반복되는 라인 - egrep '(no)+' datafile - Sh 또는 Su 라는 패턴이 들어있는 라인 - grep 'S[hu]' datafile - egrep 'S(h\\|u)' datafile - egrep '(Sh\\|Su)' datafile ",
+    "url": "/docs/daily-learning-log/20210330.html",
+    "relUrl": "/docs/daily-learning-log/20210330.html"
+  },"17": {
+    "doc": "2021-03-30",
+    "title": "정규화표현식 개인실습\t",
+    "content": "- San을 포함하고 있는 모든 줄을 출력하시오 - grep 'San' databook - 사람의 이름이 J로 시작하는 모든 줄을 출력하시오 - grep '^J' databook - 700으로 끝나는 모든 줄을 출력하시오 - grep '700$' databook - 834를 포함하지 않는 모든 줄을 출력하시오 - grep -v '834' databook - 생일이 12월인 모든 줄을 출력하시오 - grep ':12/' databook - 전화번호의 지역코드가 408인 모든 줄을 출력하시오 - grep ':408-' databook - 대문자 하나, 이어서 4개의 소문자, 콤마, 스페이스에 하나의 대문자를 초함하는 줄을 출력하시오 - grep '[A-Z][a-z]{4}, [A-Z]' databook - 성이 K나 k로 시작하는 모든 줄을 출력하시오 - grep ' [Kk][a-z]*:' databook - 급여가 6자리인 줄을 줄 번호와 함께 출력하시오 - grep ':[0-9]{6}$' databook - Lincoln이나 lincoln을 포함하고 있는 줄을 출력하시오 - grep '[Ll]incoln' databook - ID@도메인 형태로 이루어진 e-mail을 검색할 수 있는 정규식을 작성하시오 (corg) - egrep '[a-z][a-z0-9]*@[a-z][a-z0-9]*\\.(com\\|net\\|org)' test.txt - 핸드폰 번호를 검색할 수 있는 정규식을 작성하시오 - egrep '^01[016789]-[1-9][0-9]{2,3}-[0-9]{4}$' test.txt - IP주소를 검색할 수 있는 정규식을 작성하시오 - egrep '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$' test.txt ",
+    "url": "/docs/daily-learning-log/20210330.html",
+    "relUrl": "/docs/daily-learning-log/20210330.html"
+  },"18": {
+    "doc": "2021-03-30",
+    "title": "2021-03-30",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210330.html",
+    "relUrl": "/docs/daily-learning-log/20210330.html"
+  },"19": {
     "doc": "manual",
     "title": "manual",
     "content": "Text can be **bold**, _italic_, or ~~strikethrough~~. [Link to another page](another-page). There should be whitespace between paragraphs. There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project. # [](#header-1)Header 1 This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere. ## [](#header-2)Header 2 > This is a blockquote following a header. > > When something is important enough, you do it even if the odds are not in your favor. ### [](#header-3)Header 3 ```js // Javascript code with syntax highlighting. var fun = function lang(l) { dateformat.i18n = require('./lang/' + l) return true; } ``` ```ruby # Ruby code with syntax highlighting GitHubPages::Dependencies.gems.each do |gem, version| s.add_dependency(gem, \"= #{version}\") end ``` #### [](#header-4)Header 4 `with code not transformed` * This is an unordered list following a header. * This is an unordered list following a header. * This is an unordered list following a header. ##### [](#header-5)Header 5 1. This is an ordered list following a header. 2. This is an ordered list following a header. 3. This is an ordered list following a header. ###### [](#header-6)Header 6 | head1 | head two | three |:-------------|:------------------|:------| ok | good swedish fish | nice | out of stock | good and plenty | nice | ok | good `oreos` | hmm | ok | good `zoute` drop | yumm | ### There's a horizontal rule below this. * * * ### Here is an unordered list: * Item foo * Item bar * Item baz * Item zip ### And an ordered list: 1. Item one 1. Item two 1. Item three 1. Item four ### And a nested list: - level 1 item - level 2 item - level 2 item - level 3 item - level 3 item - level 1 item - level 2 item - level 2 item - level 2 item - level 1 item - level 2 item - level 2 item - level 1 item ### Nesting an ol in ul in an ol - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) 1. level 4 item (ol) 1. level 4 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) ### And a task list - [ ] Hello, this is a TODO item - [ ] Hello, this is another TODO item - [x] Goodbye, this item is done ### Small image ![](https://assets-cdn.github.com/images/icons/emoji/octocat.png) ### Large image ![](https://guides.github.com/activities/hello-world/branching.png) ### Definition lists can be used with HTML syntax. Name Godzilla Born 1952 Birthplace Japan Color Green #### Multiple description terms and values Term : Brief description of Term Longer Term : Longer description of Term, possibly more than one line Term : First description of Term, possibly more than one line : Second description of Term, possibly more than one line Term1 Term2 : Single description of Term1 and Term2, possibly more than one line Term1 Term2 : First description of Term1 and Term2, possibly more than one line : Second description of Term1 and Term2, possibly more than one line ### More code ``` Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this. ``` ``` The final element. ``` ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"13": {
+  },"20": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"14": {
+  },"21": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
