@@ -396,23 +396,107 @@
     "relUrl": "/docs/daily-learning-log/20210405.html"
   },"66": {
     "doc": "2021-04-05",
+    "title": "실습 환경 구성 내용 정리 - 강사님 ",
+    "content": "Control node 1개, Managed host 2개를 import 기본 네트워크 및 호스트이름 설정 - Control node ```js $ sudo -i # nmcli connection add con-name static ifname ens33 type ethernet ipv4.addresses 192.168.100.10/24 ipv4.gateway 192.168.100.2 ipv4.dns 192.168.100.2 ipv4.method manual # nmcli connection up static # nmcli connection delete ens33 # hostnamectl set-hostname control.example.local ``` - Managed host 1 ```js $ sudo -i # nmcli connection add con-name static ifname ens33 type ethernet ipv4.addresses 192.168.100.21/24 ipv4.gateway 192.168.100.2 ipv4.dns 192.168.100.2 ipv4.method manual # nmcli connection up static # nmcli connection delete ens33 # systemctl set-default multi-user.target # hostnamectl set-hostname managed1.example.local # reboot ``` - Managed host 2 ```js $ sudo -i # nmcli connection add con-name static ifname ens33 type ethernet ipv4.addresses 192.168.100.22/24 ipv4.gateway 192.168.100.2 ipv4.dns 192.168.100.2 ipv4.method manual # nmcli connection up static # nmcli connection delete ens33 # systemctl set-default multi-user.target # hostnamectl set-hostname managed2.example.local # reboot ``` Control node의 /etc/hosts 파일을 수정 ```js 127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4 ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6 192.168.100.21 managed1 managed1.example.local 192.168.100.22 managed2 managed2.example.local ``` Managed host에 SSH 키 기반인증을 하기 위하여 필요한 키 생성 (반드시 Control node에서 실행) ```js user@control $ ssh-keygen 입력항목은 전부 기본값으로 설정 user@control $ ssh-copy-id user@managed1.example.local user@control $ ssh-copy-id user@managed2.example.local ``` 각 호스트에 키 기반 인증이 연결되는지 확인 ```js user@control $ ssh user@managed1.example.local user@control $ ssh user@managed2.example.local ``` Control node에 ansible 설치 (Managed 에는 설치할 필요 없음) ```js user@control $ sudo yum -y install epel-release user@control $ sudo yum -y install ansible ``` Ansible 설치 확인 ```js user@control $ ansible --version ``` (옵션) ansible bash completion 설치 ```js user@control $ sudo -i root@control # cd /etc/bash_completion.d/ root@control # wget https://raw.githubusercontent.com/dysosmus/ansible-completion/master/ansible-completion.bash root@control # exit user@control $ exec bash ``` ansible 실습용 디렉토리 작성 ```js user@control $ cd user@control $ mkdir ansible user@control $ cd ansible ``` 기본 인벤토리 파일 생성 ```js user@control $ cat > inventory managed1.example.local managed2.example.local ``` 기본 환경설정 파일 생성 ```js user@control $ cat > ansible.cfg [defaults] inventory = ./inventory remote_user = user ask_pass = false [privilege_escalation] become = true become_method = sudo become_user = root become_ask_pass =true ``` ansible 명령 동작 확인 ```js user@control $ ansible -m user -a ‘name=testuser state=present’ all ``` ",
+    "url": "/docs/daily-learning-log/20210405.html",
+    "relUrl": "/docs/daily-learning-log/20210405.html"
+  },"67": {
+    "doc": "2021-04-05",
     "title": "2021-04-05",
     "content": " ",
     "url": "/docs/daily-learning-log/20210405.html",
     "relUrl": "/docs/daily-learning-log/20210405.html"
-  },"67": {
+  },"68": {
+    "doc": "2021-04-06",
+    "title": "2021-04-06",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"69": {
+    "doc": "2021-04-06",
+    "title": "Ansible 계속",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"70": {
+    "doc": "2021-04-06",
+    "title": "Ansible을 통해 관리자 권한 사용",
+    "content": "- sudo 패스워드 입력 없이 sudo 사용 가능 - sudoers 설정의 NOPASSWD 설정 - /etc/sudoers.d/ 파일에 - ALL=(ALL) NOPASSWD: ALL ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"71": {
+    "doc": "2021-04-06",
+    "title": "명령어에서 ansible.cfg 파일의 설정과 다른 설정을 사용",
+    "content": "- 명령어 맨 끝에 원하는 설정 표기 - --inventory, -i : 인벤토리 재지정 - --user, -u : remote user 재지정 - --ask-pass, -k : ask_pass 활성화 - --become, -b : become 활성화 - --become-method : become_method 재지정 - --become-user : become_user 재지정 - --ask-become-pass, -K : become_ask_pass 재지정 ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"72": {
+    "doc": "2021-04-06",
+    "title": "Ansible 모듈 검색",
+    "content": "- ansible docs 검색 - https://docs.ansible.com/ansible/2.9/ 내 module index 항목 참고 - ansible-doc 명령 사용 - ansible-doc -l : 전체 모듈 목록 확인 - ansible-doc [모듈이름] : 개별 모듈 확인 - options : 모듈 사용시 필요한 argument - = : 필수 항목 - - : 선택 항목 (일부 선택항목은 기본값이 지정되어 있으며 ansible-doc에 표기되어있음) - example 참고 - ansible-doc -l | grep [키워드] : 특정 키워드와 관련된 ansible 모듈 검색 ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"73": {
+    "doc": "2021-04-06",
+    "title": "command, shell, raw 모듈",
+    "content": "- 대상 시스템에서 단순 명령 실행 형태로 동작 - raw - python이 없어도 사용 가능 - 일반적으로는 사용하지 않음 - python이 깔려있지 않은 managed host에 python 설치 등을 하기 위한 목적 정도로만 사용 - command - 쉘을 실행하지 않고 명령 수행 - shell - 쉘을 실행하고 쉘 내에서 명령 수행 - 비교 - 파일로 존재하는 명령어 실행시는 차이가 없음 - ansible -m shell -a hostname managed1.example.local - ansible -m command -a hostname managed1.example.local - 쉘 내장 명렁어, 또는 쉘 기능 사용시는 차이가 발생 - ansible -m shell -a set managed1.example.local - ansible -m command -a set managed1.example.local ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"74": {
+    "doc": "2021-04-06",
+    "title": "Playbook",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"75": {
+    "doc": "2021-04-06",
+    "title": "Playbook",
+    "content": "- Ansible로 실행할 내용을 작성하는 문서 = Code - ad-hoc 명령과 달리 여러 가지 수행할 내용을 하나의 플레이북에 저장 - 구조 ```js - 플레이북 파일 - 플레이(1개 이상) - 작업 - 모듈(1개 이상) ``` - YAML 문법을 사용하여 작성하여야 함 - 확장자를 .yaml 또는 .yml - --- : 문서의 시작을 의미하는 마커 - … : 문서의 마지막을 의미하는 마커 - 들여쓰기 구조로 작성 : Ansible에서는 일반적으로 공백 2칸으로 한 단계를 지정 - vi 편집기에서 yaml을 작성할 때 공백 기본값을 변경하여 편리하게 코드 작성하는 방법 - ~/.vimrc 파일 작성하기 ```js syntax on autocmd FileType yaml setlocal ts=2 sts=2 sw=2 et ai nu # et: expand tab. 탭 입력시 공백으로 변환 # ai : auto indent. 자동 들여쓰기 # nu : 줄 수 표시 ``` - 목록 사용 가능(리스트) - 목록의 아이템의 하나의 대시, 공백 뒤에 아이템 목록을 표시 - 목록의 아이템1 - 목록의 아이템2 - 목록의 아이템3 - ... - 각 항목의 값을 입력할 경우 ':' 뒤에 입력 - 반드시 항목의 이름 뒤에 붙여서 : 작성 - : 뒤에 공백 한 칸 추가 - 기본적으로 플레이북에 포함되는 항목 - play의 이름(설명): name 항목으로 플레이의 이름을 표시 - hosts: 플레이를 적용할 대상 - tasks: 이 플레이를 통해 실행할 작업의 목록 - 내부에는 작업의 목록이 표시 - name으로 작업에 대한 설명 추가 - 샘플 파일 (test.yaml) ```js --- - name: My first play hosts: managed1.example.local tasks: - name: user testuser must exist user: name: testuser state: present - name: ping test ping: ... ``` ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"76": {
+    "doc": "2021-04-06",
+    "title": "플레이북 실행",
+    "content": "- ansible-playbook [옵션] - ansible 명령과 동일한 옵션 사용가능 : --become 등 - 플레이북 실행 시 구체적인 실행내용 확인 - -v : v의 개수를 1~4개 사용하여 구체적인 정도를 지정 - Gathering Facts : 플레이북 실행 시 자동으로 처음에 실행되는 대상 시스템 정보 수집단계 - Play Recap : 실행 통계. ok(정상), changed(변경), failed(실패) - --syntax-check : 플레이북 파일 내 구조적인 오류 탐지. 내용상의 결함은 찾지 못함 - -C, --check : 예행연습. 실제 대상에 변경을 가하지 않으면서 동작 여부 확인 ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"77": {
+    "doc": "2021-04-06",
+    "title": "다중 플레이",
+    "content": "- 하나의 플레이북 내에 두 개 이상의 플레이를 지정 - 각 플레이는 동일한 들여쓰기 단계를 준수하여 작성 - 각 플레이의 구조는 동일하며, 플레이마다 각각 대상을 지정할 수 있음 (hosts) - 샘플 파일 (test.yaml) ```js --- - name: My first play hosts: managed1.example.local tasks: - name: user testuser must exist user: name: testuser state: present - name: My second play hosts: managed2.example.local tasks: - name: user testuser2 must exist user: name: testuser2 state: present ... ``` ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"78": {
+    "doc": "2021-04-06",
+    "title": "플레이북 내에서 플레이 별 설정",
+    "content": "- 플레이 별로 개별적인 옵션을 지정 가능 (become, become_method, become_user, remote_user…) - 샘플 파일 (test.yaml) ```js --- - name: My first play hosts: managed1.example.local become: true tasks: - name: user testuser must exist user: name: testuser state: present - name: My second play hosts: managed2.example.local become: false tasks: - name: ping test ping: ... ``` ```js --- - name: My first play hosts: managed1.example.local tasks: - name: user testuser must exist user: name: testuser state: present become: true - name: user testuser must exist user: name: testuser2 state: present - name: My second play hosts: managed2.example.local become: false tasks: - name: ping test ping: ... ``` ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"79": {
+    "doc": "2021-04-06",
+    "title": "연습 - 웹서버 구성",
+    "content": "- managed1, managed2 서버를 각각 웹 서버, DB 서버로 구성해 보자 - 각 서버에 필요한 패키지를 설치 - 서비스 구동 - 방화벽 설정 - inventory 구성 (/home/user/practice/inventory) ```js [webservers] managed1.example.local [dbservers] managed2.example.local [allservers:children] webservers dbservers ``` - ansible.cfg 구성 (/home/user/practice/ansible.cfg) ```js [defaults] inventory = ./inventory remote_user = user ask_pass = false [privilege_escalation] become = false become_method = sudo become_user = root become_ask_pass = false ``` - webservice.yaml 구성 ; prototype (/home/user/practice/webservice.yaml) ```js --- - name: webserver is ready hosts: webservers become: true tasks: - name: httpd package is installed yum: name: httpd state: latest - name: httpd service is enabled and started - name: firewall is opened - name: dbserver is ready hosts: dbserver become: true tasks: - name: mariadb package is installed yum: name: mariadb-server state: latest - name: mariadb service is enabled and started - name: firewall is opened ... ``` ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"80": {
+    "doc": "2021-04-06",
+    "title": "2021-04-06",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210406.html",
+    "relUrl": "/docs/daily-learning-log/20210406.html"
+  },"81": {
     "doc": "manual",
     "title": "manual",
     "content": "Text can be **bold**, _italic_, or ~~strikethrough~~. [Link to another page](another-page). There should be whitespace between paragraphs. There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project. # [](#header-1)Header 1 This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere. ## [](#header-2)Header 2 > This is a blockquote following a header. > > When something is important enough, you do it even if the odds are not in your favor. ### [](#header-3)Header 3 ```js // Javascript code with syntax highlighting. var fun = function lang(l) { dateformat.i18n = require('./lang/' + l) return true; } ``` ```ruby # Ruby code with syntax highlighting GitHubPages::Dependencies.gems.each do |gem, version| s.add_dependency(gem, \"= #{version}\") end ``` #### [](#header-4)Header 4 `with code not transformed` * This is an unordered list following a header. * This is an unordered list following a header. * This is an unordered list following a header. ##### [](#header-5)Header 5 1. This is an ordered list following a header. 2. This is an ordered list following a header. 3. This is an ordered list following a header. ###### [](#header-6)Header 6 | head1 | head two | three |:-------------|:------------------|:------| ok | good swedish fish | nice | out of stock | good and plenty | nice | ok | good `oreos` | hmm | ok | good `zoute` drop | yumm | ### There's a horizontal rule below this. * * * ### Here is an unordered list: * Item foo * Item bar * Item baz * Item zip ### And an ordered list: 1. Item one 1. Item two 1. Item three 1. Item four ### And a nested list: - level 1 item - level 2 item - level 2 item - level 3 item - level 3 item - level 1 item - level 2 item - level 2 item - level 2 item - level 1 item - level 2 item - level 2 item - level 1 item ### Nesting an ol in ul in an ol - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) 1. level 4 item (ol) 1. level 4 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) ### And a task list - [ ] Hello, this is a TODO item - [ ] Hello, this is another TODO item - [x] Goodbye, this item is done ### Small image ![](https://assets-cdn.github.com/images/icons/emoji/octocat.png) ### Large image ![](https://guides.github.com/activities/hello-world/branching.png) ### Definition lists can be used with HTML syntax. Name Godzilla Born 1952 Birthplace Japan Color Green #### Multiple description terms and values Term : Brief description of Term Longer Term : Longer description of Term, possibly more than one line Term : First description of Term, possibly more than one line : Second description of Term, possibly more than one line Term1 Term2 : Single description of Term1 and Term2, possibly more than one line Term1 Term2 : First description of Term1 and Term2, possibly more than one line : Second description of Term1 and Term2, possibly more than one line ### More code ``` Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this. ``` ``` The final element. ``` ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"68": {
+  },"82": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"69": {
+  },"83": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
