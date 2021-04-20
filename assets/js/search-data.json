@@ -467,30 +467,72 @@
     "url": "/docs/daily-learning-log/20210409.html",
     "relUrl": "/docs/daily-learning-log/20210409.html"
   },"78": {
+    "doc": "2021-04-20",
+    "title": "Docker ",
+    "content": "apt가 너무 느릴 때 변경해보자 /etc/apt/sources.list archive.ubuntu.com/ubuntu --> http://mirror.kakao.com/ubuntu/ arhive.ubuntu.com security.ubuntu.com --> ftp.daum.net ",
+    "url": "/docs/daily-learning-log/20210420.html",
+    "relUrl": "/docs/daily-learning-log/20210420.html"
+  },"79": {
+    "doc": "2021-04-20",
+    "title": "ubuntu에 apache Docker image",
+    "content": "``` mkdir ubuntu-apache cd ubuntu-apache docker run -it ubuntu bash apt update apt install -y apache2 vi index.html ",
+    "url": "/docs/daily-learning-log/20210420.html",
+    "relUrl": "/docs/daily-learning-log/20210420.html"
+  },"80": {
+    "doc": "2021-04-20",
+    "title": "\n        hello apache with ubuntu base image\n",
+    "content": "~/ubuntu-apache$ cat Dockerfile FROM ubuntu:focal RUN apt update RUN DEBIAM_FRONTEND=noninteractive apt install tzdata ENV TZ Asia/Seoul RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone RUN dpkg-reconfigure --frontend noninteractive tzdata RUN apt install -y apache2 ADD index.html /var/www/html/index.html ENV A 100 ENTRYPOINT [\"/usr/sbin/apache2ctl\"] CMD [\"-D\",\"FOREGROUND\"] EXPOSE 80 VOLUME /var/www/html docker run -d -p 80:80 ubuntu-apache:v1 . ``` 레이어가 캐쉬로 저장됨 이전 dockerfile의 레이어와 같으면 캐쉬로 쓰고, 바뀐 부분만 레이어 교체 실행한다고 봐도 될 듯? 매번 새로운 업데이트 버전을 깔고 싶은데, 캐쉬때문에 업데이트를 안함 --no-cache 옵션을 넣으면 모든 레이어를 새로 빌드 ",
+    "url": "/docs/daily-learning-log/20210420.html",
+    "relUrl": "/docs/daily-learning-log/20210420.html"
+  },"81": {
+    "doc": "2021-04-20",
+    "title": "c언어 컴파일 이미지 만들기 ",
+    "content": "``` mkdir c-hello cd c-hello vi hello.c #include int main() { printf(\"Hello C World!\\n\"); return 0; } sudo apt install gcc gcc hello.c -o hello ./hello 결과 : Hello C World! vi Dockerfile FROM ubuntu:focal ADD hello /hello CMD [\"/hello\"] docker build -t chello . docker run chello ``` ",
+    "url": "/docs/daily-learning-log/20210420.html",
+    "relUrl": "/docs/daily-learning-log/20210420.html"
+  },"82": {
+    "doc": "2021-04-20",
+    "title": "컴파일 한 실행파일을 docker build 하는 것에 대하여 1 ",
+    "content": "c언어 실행파일 작은거 하나를 위해서 ubuntu 올리는거 넘나 손실 Dockerfile에 FROM을 안 쓸 수가 없음 (빌드가 아예 안돼~) 아무것도 없는 이미지(scratch)를 사용한다. ``` vi Dockerfile FROM scratch ADD hello /hello CMD [\"/hello\"] docker build -t chello . ``` docker images를 통해 아까꺼랑 비교해보면, 우분투 넣었을 때에는 72.9MB sratch 넣었을 때에는 16.7kB 근데, docker run chello하면 실행이 안됨 ldd hello 명령어 쳐서 나온 결과로 필요한 경로 확인해서 (필요한 경로 = 이미지 내부 파일 경로) ``` mkdir -p lib/x86_64-linux-gnu mkdir lib64 cp /lib/x86_64-linux-gnu/libc.so.6 lib/x86_64-linux-gnu/ cp /lib64/ld-linux-x86-64.so.2 lib64/ vi Dockerfile FROM scratch ADD hello /hello ADD lib /lib ADD lib64 /lib64 CMD [\"/hello\"] docker build -t chello . docker run chello ``` ",
+    "url": "/docs/daily-learning-log/20210420.html",
+    "relUrl": "/docs/daily-learning-log/20210420.html"
+  },"83": {
+    "doc": "2021-04-20",
+    "title": "컴파일 한 실행파일을 docker build 하는 것에 대하여 2",
+    "content": "라이브러리 지정하는 것 넘나 귀찮 아예 컴파일을 라이브러리 가져와서 응용프로그램에 때려넣는 방법도 있음 ``` gcc hello.c --static -o hello-static file hello-static ldd hello-static ls -lh hello hello-static 크기 비교 해보면, 라이브러리가 더 들어가서 그런지 static 컴파일이 훨씬 더 큼 vi Dockerfile FROM scratch ADD hello-static /hello-static CMD [\"/hello-static\"] docker build -t cstatichello . docker run cstatichello ``` ",
+    "url": "/docs/daily-learning-log/20210420.html",
+    "relUrl": "/docs/daily-learning-log/20210420.html"
+  },"84": {
+    "doc": "2021-04-20",
+    "title": "2021-04-20",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210420.html",
+    "relUrl": "/docs/daily-learning-log/20210420.html"
+  },"85": {
     "doc": "markdown manual",
     "title": "markdown manual",
     "content": "Summary () {: .text-delta } 1. TOC {:toc} Important Text can be **bold**, _italic_, or ~~strikethrough~~. [Link to another page](another-page). There should be whitespace between paragraphs. There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project. # [](#header-1)Header 1 This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere. ## [](#header-2)Header 2 > This is a blockquote following a header. > > When something is important enough, you do it even if the odds are not in your favor. ### [](#header-3)Header 3 ```js // Javascript code with syntax highlighting. var fun = function lang(l) { dateformat.i18n = require('./lang/' + l) return true; } ``` ```ruby # Ruby code with syntax highlighting GitHubPages::Dependencies.gems.each do |gem, version| s.add_dependency(gem, \"= #{version}\") end ``` #### [](#header-4)Header 4 `with code not transformed` * This is an unordered list following a header. * This is an unordered list following a header. * This is an unordered list following a header. ##### [](#header-5)Header 5 1. This is an ordered list following a header. 2. This is an ordered list following a header. 3. This is an ordered list following a header. ###### [](#header-6)Header 6 | head1 | head two | three |:-------------|:------------------|:------| ok | good swedish fish | nice | out of stock | good and plenty | nice | ok | good `oreos` | hmm | ok | good `zoute` drop | yumm | ### There's a horizontal rule below this. * * * ### Here is an unordered list: * Item foo * Item bar * Item baz * Item zip ### And an ordered list: 1. Item one 1. Item two 1. Item three 1. Item four ### And a nested list: - level 1 item - level 2 item - level 2 item - level 3 item - level 3 item - level 1 item - level 2 item - level 2 item - level 2 item - level 1 item - level 2 item - level 2 item - level 1 item ### Nesting an ol in ul in an ol - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) 1. level 4 item (ol) 1. level 4 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) ### And a task list - [ ] Hello, this is a TODO item - [ ] Hello, this is another TODO item - [x] Goodbye, this item is done ### Small image ![](https://assets-cdn.github.com/images/icons/emoji/octocat.png) ### Large image ![](https://guides.github.com/activities/hello-world/branching.png) ### Definition lists can be used with HTML syntax. Name Godzilla Born 1952 Birthplace Japan Color Green #### Multiple description terms and values Term : Brief description of Term Longer Term : Longer description of Term, possibly more than one line Term : First description of Term, possibly more than one line : Second description of Term, possibly more than one line Term1 Term2 : Single description of Term1 and Term2, possibly more than one line Term1 Term2 : First description of Term1 and Term2, possibly more than one line : Second description of Term1 and Term2, possibly more than one line ### More code ``` Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this. ``` ``` The final element. ``` ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"79": {
+  },"86": {
     "doc": "Python-study",
     "title": "Python study index page",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"80": {
+  },"87": {
     "doc": "Python-study",
     "title": "Python-study",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"81": {
+  },"88": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"82": {
+  },"89": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
