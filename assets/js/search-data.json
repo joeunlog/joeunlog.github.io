@@ -475,7 +475,7 @@
   },"79": {
     "doc": "2021-04-20",
     "title": "ubuntu에 apache Docker image",
-    "content": "``` mkdir ubuntu-apache cd ubuntu-apache docker run -it ubuntu bash apt update apt install -y apache2 vi index.html ",
+    "content": "```sh mkdir ubuntu-apache cd ubuntu-apache docker run -it ubuntu bash apt update apt install -y apache2 vi index.html ",
     "url": "/docs/daily-learning-log/20210420.html",
     "relUrl": "/docs/daily-learning-log/20210420.html"
   },"80": {
@@ -487,19 +487,19 @@
   },"81": {
     "doc": "2021-04-20",
     "title": "c언어 컴파일 이미지 만들기 ",
-    "content": "``` mkdir c-hello cd c-hello vi hello.c #include int main() { printf(\"Hello C World!\\n\"); return 0; } sudo apt install gcc gcc hello.c -o hello ./hello 결과 : Hello C World! vi Dockerfile FROM ubuntu:focal ADD hello /hello CMD [\"/hello\"] docker build -t chello . docker run chello ``` ",
+    "content": "```sh mkdir c-hello cd c-hello vi hello.c #include int main() { printf(\"Hello C World!\\n\"); return 0; } sudo apt install gcc gcc hello.c -o hello ./hello 결과 : Hello C World! vi Dockerfile FROM ubuntu:focal ADD hello /hello CMD [\"/hello\"] docker build -t chello . docker run chello ``` ",
     "url": "/docs/daily-learning-log/20210420.html",
     "relUrl": "/docs/daily-learning-log/20210420.html"
   },"82": {
     "doc": "2021-04-20",
     "title": "컴파일 한 실행파일을 docker build 하는 것에 대하여 1 ",
-    "content": "c언어 실행파일 작은거 하나를 위해서 ubuntu 올리는거 넘나 손실 Dockerfile에 FROM을 안 쓸 수가 없음 (빌드가 아예 안돼~) 아무것도 없는 이미지(scratch)를 사용한다. ``` vi Dockerfile FROM scratch ADD hello /hello CMD [\"/hello\"] docker build -t chello . ``` docker images를 통해 아까꺼랑 비교해보면, 우분투 넣었을 때에는 72.9MB sratch 넣었을 때에는 16.7kB 근데, docker run chello하면 실행이 안됨 ldd hello 명령어 쳐서 나온 결과로 필요한 경로 확인해서 (필요한 경로 = 이미지 내부 파일 경로) ``` mkdir -p lib/x86_64-linux-gnu mkdir lib64 cp /lib/x86_64-linux-gnu/libc.so.6 lib/x86_64-linux-gnu/ cp /lib64/ld-linux-x86-64.so.2 lib64/ vi Dockerfile FROM scratch ADD hello /hello ADD lib /lib ADD lib64 /lib64 CMD [\"/hello\"] docker build -t chello . docker run chello ``` ",
+    "content": "c언어 실행파일 작은거 하나를 위해서 ubuntu 올리는거 넘나 손실 Dockerfile에 FROM을 안 쓸 수가 없음 (빌드가 아예 안돼~) 아무것도 없는 이미지(scratch)를 사용한다. ```sh vi Dockerfile FROM scratch ADD hello /hello CMD [\"/hello\"] docker build -t chello . ``` docker images를 통해 아까꺼랑 비교해보면, 우분투 넣었을 때에는 72.9MB sratch 넣었을 때에는 16.7kB 근데, docker run chello하면 실행이 안됨 ldd hello 명령어 쳐서 나온 결과로 필요한 경로 확인해서 (필요한 경로 = 이미지 내부 파일 경로) ```sh mkdir -p lib/x86_64-linux-gnu mkdir lib64 cp /lib/x86_64-linux-gnu/libc.so.6 lib/x86_64-linux-gnu/ cp /lib64/ld-linux-x86-64.so.2 lib64/ vi Dockerfile FROM scratch ADD hello /hello ADD lib /lib ADD lib64 /lib64 CMD [\"/hello\"] docker build -t chello . docker run chello ``` ",
     "url": "/docs/daily-learning-log/20210420.html",
     "relUrl": "/docs/daily-learning-log/20210420.html"
   },"83": {
     "doc": "2021-04-20",
     "title": "컴파일 한 실행파일을 docker build 하는 것에 대하여 2",
-    "content": "라이브러리 지정하는 것 넘나 귀찮 아예 컴파일을 라이브러리 가져와서 응용프로그램에 때려넣는 방법도 있음 ``` gcc hello.c --static -o hello-static file hello-static ldd hello-static ls -lh hello hello-static 크기 비교 해보면, 라이브러리가 더 들어가서 그런지 static 컴파일이 훨씬 더 큼 vi Dockerfile FROM scratch ADD hello-static /hello-static CMD [\"/hello-static\"] docker build -t cstatichello . docker run cstatichello ``` ",
+    "content": "라이브러리 지정하는 것 넘나 귀찮 아예 컴파일을 라이브러리 가져와서 응용프로그램에 때려넣는 방법도 있음 ```sh gcc hello.c --static -o hello-static file hello-static ldd hello-static ls -lh hello hello-static 크기 비교 해보면, 라이브러리가 더 들어가서 그런지 static 컴파일이 훨씬 더 큼 vi Dockerfile FROM scratch ADD hello-static /hello-static CMD [\"/hello-static\"] docker build -t cstatichello . docker run cstatichello ``` ",
     "url": "/docs/daily-learning-log/20210420.html",
     "relUrl": "/docs/daily-learning-log/20210420.html"
   },"84": {
@@ -509,30 +509,72 @@
     "url": "/docs/daily-learning-log/20210420.html",
     "relUrl": "/docs/daily-learning-log/20210420.html"
   },"85": {
+    "doc": "2021-04-21",
+    "title": "Docker ",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210421.html",
+    "relUrl": "/docs/daily-learning-log/20210421.html"
+  },"86": {
+    "doc": "2021-04-21",
+    "title": "Docker에서 Go language 써보기",
+    "content": "```sh sudo apt install golang mkdir go-hello && cd go-hello vi hello.go package main import \"fmt\" func main() { fmt.Println(\"Hello Go!\") } go run hello.go go build -o hello hello.go ./hello >>Hello Go! file hello >>statically linked # golang은 기본이 static build!!! vi Dockerfile FROM scratch COPY hello /hello CMD [\"/hello\"] docker build -t gohello . docker run gohello >>Hello Go! ``` TDD : 테스트 주도 개발 . 작성한 코드가 잘 실행되는지 테스트 할 코드를 작성하는 것 Dockerfile에서 RUN 명령을 이용해서 테스트 코드를 실행하는 용도로 쓸 수 있음 Dockfile에서 golang build까지 하기 . golang을 build, 실행하는 Dockerfile 예시 ```sh vi Dockerfile FROM golang ADD main.go /root WORKDIR /root RUN go build -o /root/mainAPP /root/main.go CMD [\"./mainApp\"] ``` 하지만, golang image 자체가 너무 커서 용량 효율이 좋지 못함 따라서 빌드하는거 따로, 실행하는거 따로 만듦 예시 ```sh FROM golang ADD main.go /root WORKDIR /root RUN go build -o /root/mainApp /root/main.go #FROM alpine:latest FROM scratch WORKDIR /root COPY --from=0 /root/mainApp . CMD [\"./mainApp\"] ``` Dockerfile에서 c컴파일실행 멀티스테이지로 만들기 실습 . ```sh vagrant@docker-engine:~/c-hello$ vi Dockerfile FROM gcc:9 ADD hello.c /root WORKDIR /root RUN gcc hello.c --static -o hello-static FROM scratch WORKDIR /root COPY --from=0 /root/hello-static . CMD [\"./hello-static\"] docker build -t cmultihello . docker run cmultihello ``` Dockerfile에서 go컴파일실행 멀티스테이지로 만들기 실습 . ```sh vagrant@docker-engine:~/go-hello$vi Dockerfile FROM golang ADD hello.go /root WORKDIR /root RUN go build -o /root/hello /root/hello.go FROM scratch WORKDIR /root COPY --from=0 /root/hello . CMD [\"./hello\"] docker build -t gmultihello . docker run gmultihello ``` docker image 프룬으로 none인 댕글이미지 지울 수 있음 멀티스테이지로 하면 맨 위부터 0번 컨테이너가 생김 그래서 --from=0은 0번 컨테이너에서 내용을 가져온다는 의미 근데 주로 ``` FROM golang as gobuilder ``` 이렇게 해놓고 ``` --from=gobuilder ``` 이런식으로 내용 가져오기 가능 ``` docker container stop $(docker container ls –aq) // 일괄 stop docker container rm $(docker container ls –aq) // 일괄 rm ``` ",
+    "url": "/docs/daily-learning-log/20210421.html",
+    "relUrl": "/docs/daily-learning-log/20210421.html"
+  },"87": {
+    "doc": "2021-04-21",
+    "title": " .dockerignore ",
+    "content": "https://docs.docker.com/engine/reference/builder/#dockerignore-file ADD나 COPY 할 때 제외할 파일을 지정함 >> ex. 로그, 임시, 민감한 인증/정보 파일, 패키지 ``` vi .dockerignore Dockerfile logs/ temp/ *.go ``` ",
+    "url": "/docs/daily-learning-log/20210421.html",
+    "relUrl": "/docs/daily-learning-log/20210421.html"
+  },"88": {
+    "doc": "2021-04-21",
+    "title": " window에서 원격 연결로 docker 사용해보기 ",
+    "content": "window powershell 관리자권한 실행 ```sh choco install docker-cli ``` docker 엔진에서 ```sh systemctl status docker sudo vi /etc/systemd/systme/multi-user.target.wants/docker.service # 13번째 줄 ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375 sudo systemctl daemon-reload sudo systemctl restart docker systemctl status docker -l ``` window powershell 관리자권한에서 ```sh docker -H tcp://192.168.200.10:2375 ps setx DOCKER_HOST \"tcp://192.168.200.10:2375\" docker ps # docker 엔진과 똑같이 사용 가능 ``` ",
+    "url": "/docs/daily-learning-log/20210421.html",
+    "relUrl": "/docs/daily-learning-log/20210421.html"
+  },"89": {
+    "doc": "2021-04-21",
+    "title": " Mac에서 원격 연결로 docker 사용해보기 ",
+    "content": "``` wget https://download.docker.com/mac/static/stable/x86_64/docker-20.10.6.tgz tar xf docker-20.10.6.tgz sudo cp docker/docker /usr/local/bin ``` ",
+    "url": "/docs/daily-learning-log/20210421.html",
+    "relUrl": "/docs/daily-learning-log/20210421.html"
+  },"90": {
+    "doc": "2021-04-21",
+    "title": " Docker compose ",
+    "content": "docker compose 설치 . https://docs.docker.com/compose/install/#install-compose-on-linux-systems 위의 링크에 접속하면 각 os에 따른 설치 방법 확인 가능 아래는 window 환경에서 설치 방법 ```sh sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose sudo chmod +x /usr/local/bin/docker-compose ``` docker compose 사용해서 wordpress 올려보기 . ```sh mkdir wp-compose cd wp-compose vi docker-compose.yml version: '3.1' services: wordpress: image: wordpress restart: always ports: - 8080:80 environment: WORDPRESS_DB_HOST: db WORDPRESS_DB_USER: wpadmin WORDPRESS_DB_PASSWORD: qwer1234 WORDPRESS_DB_NAME: wp volumes: - wordpress:/var/www/html networks: - wp-net db: image: mysql:5.7 restart: always environment: MYSQL_DATABASE: wp MYSQL_USER: wpadmin MYSQL_PASSWORD: qwer1234 MYSQL_ROOT_PASSWORD: qwer1234 volumes: - db:/var/lib/mysql networks: - wp-net volumes: wordpress: db: networks: wp-net: docker-compose up -d docker-compose ls docker ps docker volume ls docker network ls docker-compose down ``` 크롬 시크릿모드에서 http://192.168.200.10:8080 vi 편집기에 복붙 예쁘게 하려면 :set paste docker-compose.yml의 각 의미 ```yaml version: '3.1' services: # docker run wordpress: image: wordpress restart: always ports: # -p - 80:80 environment: # -e WORDPRESS_DB_HOST: db WORDPRESS_DB_USER: wpadmin WORDPRESS_DB_PASSWORD: qwer1234 WORDPRESS_DB_NAME: wp volumes: # -v - wordpress:/var/www/html networks: # --network - wp-net db: image: mysql:5.7 restart: always environment: MYSQL_DATABASE: wp MYSQL_USER: wpadmin MYSQL_PASSWORD: qwer1234 MYSQL_ROOT_PASSWORD: qwer1234 volumes: - db:/var/lib/mysql networks: - wp-net volumes: # docker volume create wordpress: # docker volume create wordpress db: # docker volume create db networks: # docker network create wp-net: # docker network create wp-net ``` Docker compose scaling . docker-compose up -d 상태에서 ``` docker-compose scale =10 ``` ",
+    "url": "/docs/daily-learning-log/20210421.html",
+    "relUrl": "/docs/daily-learning-log/20210421.html"
+  },"91": {
+    "doc": "2021-04-21",
+    "title": "2021-04-21",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210421.html",
+    "relUrl": "/docs/daily-learning-log/20210421.html"
+  },"92": {
     "doc": "markdown manual",
     "title": "markdown manual",
     "content": "Summary () {: .text-delta } 1. TOC {:toc} Important Text can be **bold**, _italic_, or ~~strikethrough~~. [Link to another page](another-page). There should be whitespace between paragraphs. There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project. # [](#header-1)Header 1 This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere. ## [](#header-2)Header 2 > This is a blockquote following a header. > > When something is important enough, you do it even if the odds are not in your favor. ### [](#header-3)Header 3 ```js // Javascript code with syntax highlighting. var fun = function lang(l) { dateformat.i18n = require('./lang/' + l) return true; } ``` ```ruby # Ruby code with syntax highlighting GitHubPages::Dependencies.gems.each do |gem, version| s.add_dependency(gem, \"= #{version}\") end ``` #### [](#header-4)Header 4 `with code not transformed` * This is an unordered list following a header. * This is an unordered list following a header. * This is an unordered list following a header. ##### [](#header-5)Header 5 1. This is an ordered list following a header. 2. This is an ordered list following a header. 3. This is an ordered list following a header. ###### [](#header-6)Header 6 | head1 | head two | three |:-------------|:------------------|:------| ok | good swedish fish | nice | out of stock | good and plenty | nice | ok | good `oreos` | hmm | ok | good `zoute` drop | yumm | ### There's a horizontal rule below this. * * * ### Here is an unordered list: * Item foo * Item bar * Item baz * Item zip ### And an ordered list: 1. Item one 1. Item two 1. Item three 1. Item four ### And a nested list: - level 1 item - level 2 item - level 2 item - level 3 item - level 3 item - level 1 item - level 2 item - level 2 item - level 2 item - level 1 item - level 2 item - level 2 item - level 1 item ### Nesting an ol in ul in an ol - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) 1. level 4 item (ol) 1. level 4 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) ### And a task list - [ ] Hello, this is a TODO item - [ ] Hello, this is another TODO item - [x] Goodbye, this item is done ### Small image ![](https://assets-cdn.github.com/images/icons/emoji/octocat.png) ### Large image ![](https://guides.github.com/activities/hello-world/branching.png) ### Definition lists can be used with HTML syntax. Name Godzilla Born 1952 Birthplace Japan Color Green #### Multiple description terms and values Term : Brief description of Term Longer Term : Longer description of Term, possibly more than one line Term : First description of Term, possibly more than one line : Second description of Term, possibly more than one line Term1 Term2 : Single description of Term1 and Term2, possibly more than one line Term1 Term2 : First description of Term1 and Term2, possibly more than one line : Second description of Term1 and Term2, possibly more than one line ### More code ``` Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this. ``` ``` The final element. ``` ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"86": {
+  },"93": {
     "doc": "Python-study",
     "title": "Python study index page",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"87": {
+  },"94": {
     "doc": "Python-study",
     "title": "Python-study",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"88": {
+  },"95": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"89": {
+  },"96": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
