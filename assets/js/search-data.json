@@ -551,30 +551,78 @@
     "url": "/docs/daily-learning-log/20210421.html",
     "relUrl": "/docs/daily-learning-log/20210421.html"
   },"92": {
+    "doc": "2021-04-22",
+    "title": "Docker ",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"93": {
+    "doc": "2021-04-22",
+    "title": "Docker registry",
+    "content": "docker image 저장소 - Public Registry : 누구나 pull, 인증받은 사용자 push - Private Registry : 인증받은 사용자 pull/push docker hub 구독 여부에 따라 횟수가 다름 Docker local registry에 push하는 image name . ```sh localhost:5000/:Docker hub에 push하는 image name . ```sh docker.io//: # docker.io는 생략 가능 ``` github에 push하는 image name . ```sh github.io//: ``` google cloud registry에 push하는 image name . ```sh k8s.gcr.io/: ``` Amazon ECR . ```sh .dkr.ecr..amazonaws.com/: ``` Docker local registry에 이미지 올리기 . ```sh docker tag 이미지 localhost:5000/이미지:태그 docker push localhost:5000/이미지:태그 docker pull localhost:5000/이미지:태그 ``` Repository image 확인 . ```sh curl localhost:5000/v2/_catalog ``` 태그 목록 확인 ```sh curl localhost:5000/v2//tags/list ``` ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"94": {
+    "doc": "2021-04-22",
+    "title": "Harbor",
+    "content": "Harbor 설치 . https://goharbor.io/ >> 버전 약어 중 rc = Release Candidate (배포 후보) harbor offline은 다운로드 파일에 component image들이 이미 포함된 것 ```sh mkdir harbor cd harbor wget https://github.com/goharbor/harbor/releases/download/v2.2.1/harbor-online-installer-v2.2.1.tgz tar xf harbor-online-installer-v2.2.1.tgz cd habor/ cp harbor.yml.tmpl harbor.yml vi harbor.yml hostname을 도커엔진 IP로 변경, https관련 내용들은 주석처리 # Configuration file of Harbor # The IP address or hostname to access admin UI and registry service. # DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients. hostname: 192.168.200.10 # http related config http: # port for http, default is 80. If https enabled, this port will redirect to https port port: 80 # https related config #https: # https port for harbor, default is 443 #port: 443 # The path of cert and key files for nginx #certificate: /your/certificate/path #private_key: /your/private/key/path docker info #Server 맨 아래쪽에 Insecure Registries #docker engine이랑 docker registry는 http로 통신함 #80포트로 통신을 한다는 뜻 # sudo vi /etc/docker/daemon.json { \"insecure-registries\" : [\"192.168.200.10\"] } sudo systemctl restart docker sudo ./install.sh #/harbor/harbor에서 해야 함 sudo docker-compose ps ``` 크롬 시크릿모드에서 http://192.168.200.10 ID:admin PW : Harbor12345 ``` docker login -u admin -p Harbor12345 192.168.200.10 docker tag ubuntu 192.168.200.10/library/ubuntu docker push 192.168.200.10/library/ubuntu #harbor에 미리 생성되어 있던 library라는 repository에 ubuntu 이미지를 올림 ``` 새로 올린 이미지를 크롬에서 확인(pull command복사버튼)하면 ```sh 192.168.200.10/library/ubuntu:latest #위는 태그명으로 표현한 것이고, 아래는 해쉬로 표시한 것 192.168.200.10/library/ubuntu@sha256:5403064f94b617f7975a19ba4d1a1299fd584397f6ee4393d0e16744ed11aab1 #일반적으로 이미지 가져오고 할 때, 제대로 잘 가져왔는지 해쉬값을 비교해서 확인함 ``` ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"95": {
+    "doc": "2021-04-22",
+    "title": "Kubernetes ",
+    "content": "- 개발/테스트 용 - Docker for Desktop - Minikube - 프로덕션 : 설치형 - kops : EC2에 설치 - kubeadm - kubespray - 프로덕션 : 관리형 - EKS : 비용 발생 - AKS - GKE ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"96": {
+    "doc": "2021-04-22",
+    "title": "시스템의 역할",
+    "content": "참조 https://kubernetes.io/ko/docs/concepts/overview/components/ Coltrol Plane, node 모두 각각의 시스템 (물리적 혹은 인스턴스) - Control plane : 쿠버네티스 클러스터 전체를 제어하는 노드 : 구) Master Node - Control plane은 꼭 3개 이상의 cluster로 제공되어야 함(복제 필수) - Control plane의 etcd : 상태정보를 비롯한 모든 정보들을 저장 - Node : 컨테이너를 제공 : 구) minions, worker node - node의 kubelet : 컨테이너 제공 - node의 k-proxy : 컨테이너의 네트워크 제공 우리가 구성한 VM은 Control plane이자 node 둘 다 기능을 하게끔 구성할 예정 쿠버네티스의 pod가 도커의 컨테이너랑 비슷한 개념 ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"97": {
+    "doc": "2021-04-22",
+    "title": "kubeadm으로 Kubernetes 설치",
+    "content": "참조 https://kubernetes.io/ko/docs/setup/production-environment/tools/kubeadm/install-kubeadm/ ```sh sudo apt-get update sudo apt-get install -y apt-transport-https ca-cerificates curl sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg echo \"deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main\" | sudo tee /etc/apt/sources.list.d/kubernetes.list sudo apt-get update sudo apt-get install -y kubelet=1.19.10-00 kubeadm=1.19.10-00 kubectl=1.19.10-00 sudo apt-mark hold kubelet kubeadm kubectl sudo kubeadm init --apiserver-advertise-address=192.168.200.10 --pod-network-cidr=192.168.0.0/16 mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config kubeadm join 192.168.200.10:6443 --token lgjg8u.64ge20rbkubeadm join 192.168.200.10:6443 --token izgpsf.36wn2ba5urxz0dq2 --discovery-token-ca-cert-hash sha256:dff4a90db8a9952d0a57dfe1c818a6435efed4c5b275f9214f912cb4667e5006 kubeadm join 192.168.200.10:6443 --token izgpsf.36wn2ba5urxz0dq2 \\ kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml kubectl get nodes kubectl get pods -A ``` 추천 책 : 쿠버네티스 인 액션 (어려움!!!) ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"98": {
+    "doc": "2021-04-22",
+    "title": "공부방법에 대하여",
+    "content": "네트워크에서 중요한 것 routed protocol : 순수한 네트워크 통신 : 매우 중요 Ethernet, IP, ARP/RARP, ICMP, TCP, UDP, SCTP, HTTP, FTP, SSH, DNS, DHCP, SSL routing protocol : 네트워크 장비에 대한 것 라우터 : RIP, EIGRP, OSPF, BGP, IS-IS 스위치 : STP, VLAN 책 : 마스터링 TCP/IP ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"99": {
+    "doc": "2021-04-22",
+    "title": "2021-04-22",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210422.html",
+    "relUrl": "/docs/daily-learning-log/20210422.html"
+  },"100": {
     "doc": "markdown manual",
     "title": "markdown manual",
     "content": "Summary () {: .text-delta } 1. TOC {:toc} Important Text can be **bold**, _italic_, or ~~strikethrough~~. [Link to another page](another-page). There should be whitespace between paragraphs. There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project. # [](#header-1)Header 1 This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere. ## [](#header-2)Header 2 > This is a blockquote following a header. > > When something is important enough, you do it even if the odds are not in your favor. ### [](#header-3)Header 3 ```js // Javascript code with syntax highlighting. var fun = function lang(l) { dateformat.i18n = require('./lang/' + l) return true; } ``` ```ruby # Ruby code with syntax highlighting GitHubPages::Dependencies.gems.each do |gem, version| s.add_dependency(gem, \"= #{version}\") end ``` #### [](#header-4)Header 4 `with code not transformed` * This is an unordered list following a header. * This is an unordered list following a header. * This is an unordered list following a header. ##### [](#header-5)Header 5 1. This is an ordered list following a header. 2. This is an ordered list following a header. 3. This is an ordered list following a header. ###### [](#header-6)Header 6 | head1 | head two | three |:-------------|:------------------|:------| ok | good swedish fish | nice | out of stock | good and plenty | nice | ok | good `oreos` | hmm | ok | good `zoute` drop | yumm | ### There's a horizontal rule below this. * * * ### Here is an unordered list: * Item foo * Item bar * Item baz * Item zip ### And an ordered list: 1. Item one 1. Item two 1. Item three 1. Item four ### And a nested list: - level 1 item - level 2 item - level 2 item - level 3 item - level 3 item - level 1 item - level 2 item - level 2 item - level 2 item - level 1 item - level 2 item - level 2 item - level 1 item ### Nesting an ol in ul in an ol - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) 1. level 4 item (ol) 1. level 4 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) ### And a task list - [ ] Hello, this is a TODO item - [ ] Hello, this is another TODO item - [x] Goodbye, this item is done ### Small image ![](https://assets-cdn.github.com/images/icons/emoji/octocat.png) ### Large image ![](https://guides.github.com/activities/hello-world/branching.png) ### Definition lists can be used with HTML syntax. Name Godzilla Born 1952 Birthplace Japan Color Green #### Multiple description terms and values Term : Brief description of Term Longer Term : Longer description of Term, possibly more than one line Term : First description of Term, possibly more than one line : Second description of Term, possibly more than one line Term1 Term2 : Single description of Term1 and Term2, possibly more than one line Term1 Term2 : First description of Term1 and Term2, possibly more than one line : Second description of Term1 and Term2, possibly more than one line ### More code ``` Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this. ``` ``` The final element. ``` ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"93": {
+  },"101": {
     "doc": "Python-study",
     "title": "Python study index page",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"94": {
+  },"102": {
     "doc": "Python-study",
     "title": "Python-study",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"95": {
+  },"103": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"96": {
+  },"104": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
