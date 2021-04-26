@@ -617,30 +617,72 @@
     "url": "/docs/daily-learning-log/20210423.html",
     "relUrl": "/docs/daily-learning-log/20210423.html"
   },"103": {
+    "doc": "2021-04-26",
+    "title": "Kubernetes",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210426.html",
+    "relUrl": "/docs/daily-learning-log/20210426.html"
+  },"104": {
+    "doc": "2021-04-26",
+    "title": "kuberspray로 kubernetes 환경 설정하기",
+    "content": "참고 주소 https://github.com/kubernetes-sigs/kubespray https://kubernetes.io/ko/docs/setup/production-environment/tools/kubespray/ ```sh #kubespray pull git clone --branch release-2.14 https://github.com/kubernetes-sigs/kubespray.git cd kubespray #install requirements sudo apt install python3-pip sudo pip3 install -r requirements.txt #ssh key ssh-keygen # keygen 암호 입력 때 그냥 엔터 쳐야 암호 없이 접근 가능 ssh-copy-id vagrant@192.168.201.11 # 암호를 입력하라고 뜰 때, vagrant 기본 설정인 vagrant 입력 ssh-copy-id vagrant@192.168.201.21 ssh-copy-id vagrant@192.168.201.22 ssh-copy-id vagrant@192.168.201.23 # inventory cp -r inventory/sample inventory/mycluster vi inventory/mycluster/inventory.ini [all] k8s-m1 ansible_host=192.168.201.11 ip=192.168.201.11 ansible_connection=local k8s-w1 ansible_host=192.168.201.21 ip=192.168.201.21 k8s-w2 ansible_host=192.168.201.22 ip=192.168.201.22 k8s-w3 ansible_host=192.168.201.23 ip=192.168.201.23 [kube-master] k8s-m1 [etcd] k8s-m1 [kube-node] k8s-w1 k8s-w2 k8s-w3 [calico-rr] [k8s-cluster:children] kube-master kube-node calico-rr # inventory graph로 확인 ansible-inventory -i inventory/mycluster/inventory.ini --graph # 통신 확인 ansible all -i inventory/mycluster/inventory.ini -m ping # playbook ansible-playbook -i inventory/mycluster/inventory.ini cl uster.yml -b # 쿠버네티스 배포/플레이북 실행 # kubeconfig 파일 복사 mkdir $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config #### kubectl 자동완성 기능 kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl exec bash ``` pod의 구조 . - pod 기본 정보 - Pod : workload를 제어할 수 있는 가장 작은 단위 - Pod를 Replica로 복제(pod 자체가 복제되는 것, 안에 container2개 있었으면 똑같이 2개로) - 안에 있는 container를 제어할 수 있는 것은 아님 - pod 안의 containers는 같은 네트워크를 제공받는다. volume도 마찬가지 - container마다 이미지는 다를 수 있지 - pod 안에 web과 db를 같이 놓는 경우 - anti pattern임 : 실행될 지 몰라도, 하면 안되는 구조 - 같은 네트워크와 volume을 공유하기 때문에 격리가 안됨 - 이런 경우를 하나의 pod에 2개의 main application이 들어갔다고 함 - pod는 main app과 side car(보조)로 구성해야 옳다 - ex. web, puller : puller가 다른데서 정보를 가져와서 공유 volume에 저장하는 역할을 하고 web이 그 정보를 가져다 쓴다 - ex. web, log : log는 web에서 발생한 log를 따로 다른 곳에 저장하는 역할을 함 ",
+    "url": "/docs/daily-learning-log/20210426.html",
+    "relUrl": "/docs/daily-learning-log/20210426.html"
+  },"105": {
+    "doc": "2021-04-26",
+    "title": "pod 실습",
+    "content": "```sh mkdir pod vi pod.yaml apiVersion: v1 kind: Pod metadata: name: myapp-pod spec: containers: - name: myapp image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 protocol: TCP kubectl create -f pod.yaml kubectl explain pod.spec ``` Labels . 참고 주소 https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/labels/ - metadata에 선언 - 기능 - 검색 - 리소스 간 연결 ```sh vi pod.yaml apiVersion: v1 kind: Pod metadata: name: myapp-pod labels: app: myapp env: development spec: containers: - name: myapp image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 protocol: TCP ``` ```sh kubectl run web2 --image httpd kubectl get pods --show-labels # run으로 pod 생성하면 기본 label로 rum=이 붙음 # 반면, yaml로 생성했을 시 yaml에 label 내용이 없으면 label이 kubectl label pod web2 app=myapp --overwrite # overwrite 옵션이 있어야 원래 있던 값에 덮어 씌우기 가능 kubectl label pod web2 app='' --overwrite # 빈 값으로 대체 kubectl label pod web2 app- # 해당 키 삭제 ``` label 셀렉터 . label을 기준으로 조건에 해당하는 pod를 검색할 수 있음 - 일치성 - Key =Value - Key == Value - Key != Value - 집합성 - Key in (Value) - Key notin (Value) - Key - !Key ```sh kubectl get pods -l 'app=myapp' # app=myapp인 것 찾기 kubectl get pods -l 'app in (myapp)' # app의 value가 (myapp)집합에 속하는 것 찾기 kubectl get pods -l 'env in (development)' # env의 value가 (development)집합에 속하는 것 찾기 kubectl get pods -l 'env in (development,production)' # env의 value가 (development, production)집합에 속하는 것 찾기 kubectl get pods -l 'env' # 키 값에 env가 있는 것 찾기 kubectl get pods -l '!env' # 키 값에 env가 없는 것 찾기 ``` annotation . 참고 주소 https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/annotations/ - metadata에 선언 - 책에서는 주석이라고 표현하지만 #주석이랑은 좀 다름 - 검색 용도도 아니고, 리소스 연결을 위한 것도 아님 - 구성 자체는 label과 같다 - label이 식별의 의미라면, annotation은 단순 정보 - API 또는 라이브러리를 통해 해당 값을 참조할 수 있다 ```sh kubectl annotate pod web2 header=jang --overwrite # annotation 수정 kubectl describe pod web2 | head # annotation 확인 kubectl annotate pod web1 header- # annotation 삭제 vi pod.yaml apiVersion: v1 kind: Pod metadata: name: myapp-pod labels: app: myapp env: development annotations: header: jang spec: containers: - name: myapp image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 protocol: TCP kubectl create -f pod.yaml kubectl describe po myapp-pod | head ``` Namespace . 참고 주소 https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/namespaces/ ```sh kubectl get namespaces kubectl get ns kubectl get pods kubectl get pods -n default kubectl run web1 --image httpd --namespace kube-system kubectl get po -n kube-system kubectl delete pod web1 -n kube-system vi pod.yaml apiVersion: v1 kind: Pod metadata: name: myapp-pod namespace: kube-system labels: app: myapp env: development annotations: header: jang spec: containers: - name: myapp image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 protocol: TCP # yaml에 namgespace 지정하면 알아서 해당 ns에 생성, 제거됨 kubectl create namespace quality-assurance kubectl get ns kubectl delete namespace quality-assurance # ns에 resource가 남아있는 경우 지워지지 않음 vi ns.yaml apiVersion: v1 kind: Namespace metadata: name: quality-assurance kubectl create -f ns.yaml kubectl get ns kubectl delete -f ns.yaml ``` ",
+    "url": "/docs/daily-learning-log/20210426.html",
+    "relUrl": "/docs/daily-learning-log/20210426.html"
+  },"106": {
+    "doc": "2021-04-26",
+    "title": "Pod life cycle",
+    "content": "참고 주소 https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/ - pod 단계 - Pending - Running - Succeeded - Failed - Unknown - Terminating - 컨테이너 상태 - Waiting - Running - Terminated ",
+    "url": "/docs/daily-learning-log/20210426.html",
+    "relUrl": "/docs/daily-learning-log/20210426.html"
+  },"107": {
+    "doc": "2021-04-26",
+    "title": "Replication Controller",
+    "content": "참고 주소 https://kubernetes.io/ko/docs/concepts/workloads/controllers/replicationcontroller/ - 줄여서 RC - 파드 제어 컨트롤러 중 하나 - 디플로이먼트 - 레플리카셋 - 스테이트풀셋 - 데몬셋 - 잡 - 크론잡 - 레플리케이션 컨트롤러 << - etc(지금 중요한 것은 아니라 뺌) - 지정된 수의 파드 레플리카 실행을 보장 - 최초의 쿠버네티스 컨트롤러이지만, 레플리카셋으로 대체되면서 사용이 줄었음 - rc의 .spec.template에는 metadata와 spec밖에 없음 : 어차피 apiVersion, kind는 v1, pod로 정해져있기 때문 - 복제해서 사용할 pod의 spec이 .spec.template.spec에 들어가는 것 ",
+    "url": "/docs/daily-learning-log/20210426.html",
+    "relUrl": "/docs/daily-learning-log/20210426.html"
+  },"108": {
+    "doc": "2021-04-26",
+    "title": "중요!!!!!!!!!!!!!!!!!!!!",
+    "content": "- template에 들어가는 label이 pod에 들어갈 label이고, 따라서 rc의 selector는 자동으로 그 label과 같은 것이 들어가야함 : selector가 자신이 제어할 label을 지정하는 것이기 때문 - rc의 label과 pod의 label은 다른 것 - label을 기준으로 관리하기 때문에, 원래 관리하던 pod의 label이 바뀌면 하나를 더 생성 : 관리하고 있는 숫자에서 하나가 빠졌다고 생각하기 때문 - 마찬가지로, 관리하고 있는 pod label을 가지고 있는 수가 desire보다 크면 삭제시킴 ```sh apiVersion: v1 kind: ReplicationController metadata: name: nginx labels: app: nginx spec: replicas: 3 selector: app: nginx template: metadata: name: nginx labels: app: nginx spec: containers: - name: nginx image: nginx ports: - containerPort: 80 ``` ",
+    "url": "/docs/daily-learning-log/20210426.html",
+    "relUrl": "/docs/daily-learning-log/20210426.html"
+  },"109": {
+    "doc": "2021-04-26",
+    "title": "2021-04-26",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210426.html",
+    "relUrl": "/docs/daily-learning-log/20210426.html"
+  },"110": {
     "doc": "markdown manual",
     "title": "markdown manual",
     "content": "Summary () {: .text-delta } 1. TOC {:toc} Important Text can be **bold**, _italic_, or ~~strikethrough~~. [Link to another page](another-page). There should be whitespace between paragraphs. There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project. # [](#header-1)Header 1 This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere. ## [](#header-2)Header 2 > This is a blockquote following a header. > > When something is important enough, you do it even if the odds are not in your favor. ### [](#header-3)Header 3 ```js // Javascript code with syntax highlighting. var fun = function lang(l) { dateformat.i18n = require('./lang/' + l) return true; } ``` ```ruby # Ruby code with syntax highlighting GitHubPages::Dependencies.gems.each do |gem, version| s.add_dependency(gem, \"= #{version}\") end ``` #### [](#header-4)Header 4 `with code not transformed` * This is an unordered list following a header. * This is an unordered list following a header. * This is an unordered list following a header. ##### [](#header-5)Header 5 1. This is an ordered list following a header. 2. This is an ordered list following a header. 3. This is an ordered list following a header. ###### [](#header-6)Header 6 | head1 | head two | three |:-------------|:------------------|:------| ok | good swedish fish | nice | out of stock | good and plenty | nice | ok | good `oreos` | hmm | ok | good `zoute` drop | yumm | ### There's a horizontal rule below this. * * * ### Here is an unordered list: * Item foo * Item bar * Item baz * Item zip ### And an ordered list: 1. Item one 1. Item two 1. Item three 1. Item four ### And a nested list: - level 1 item - level 2 item - level 2 item - level 3 item - level 3 item - level 1 item - level 2 item - level 2 item - level 2 item - level 1 item - level 2 item - level 2 item - level 1 item ### Nesting an ol in ul in an ol - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) 1. level 4 item (ol) 1. level 4 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) ### And a task list - [ ] Hello, this is a TODO item - [ ] Hello, this is another TODO item - [x] Goodbye, this item is done ### Small image ![](https://assets-cdn.github.com/images/icons/emoji/octocat.png) ### Large image ![](https://guides.github.com/activities/hello-world/branching.png) ### Definition lists can be used with HTML syntax. Name Godzilla Born 1952 Birthplace Japan Color Green #### Multiple description terms and values Term : Brief description of Term Longer Term : Longer description of Term, possibly more than one line Term : First description of Term, possibly more than one line : Second description of Term, possibly more than one line Term1 Term2 : Single description of Term1 and Term2, possibly more than one line Term1 Term2 : First description of Term1 and Term2, possibly more than one line : Second description of Term1 and Term2, possibly more than one line ### More code ``` Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this. ``` ``` The final element. ``` ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"104": {
+  },"111": {
     "doc": "Python-study",
     "title": "Python study index page",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"105": {
+  },"112": {
     "doc": "Python-study",
     "title": "Python-study",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"106": {
+  },"113": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"107": {
+  },"114": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
