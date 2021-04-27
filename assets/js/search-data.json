@@ -659,30 +659,54 @@
     "url": "/docs/daily-learning-log/20210426.html",
     "relUrl": "/docs/daily-learning-log/20210426.html"
   },"110": {
+    "doc": "2021-04-27",
+    "title": "Kubernetes",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210427.html",
+    "relUrl": "/docs/daily-learning-log/20210427.html"
+  },"111": {
+    "doc": "2021-04-27",
+    "title": "Kubernetes object 관리",
+    "content": "- Imperative: 절차, 명령형 - kubectl create - kubectl delete - kubectl run - kubectl edit - kubectl replace - kubectl patch rs myapp-rs1 -p '{\"spec\": {\"replicas\":1}}' - Declarative: 선언형 - kubectl apply ",
+    "url": "/docs/daily-learning-log/20210427.html",
+    "relUrl": "/docs/daily-learning-log/20210427.html"
+  },"112": {
+    "doc": "2021-04-27",
+    "title": "Kubernetes Controller",
+    "content": "ReplicationController . - 어제 배움 ReplicaSet . - spec.selector.matchLabels : 일치성 관련 선언 (key=value로 선언) - spec.selector.matchExpressions : 집합성 관련 선언 - key : 키 - operator : in, Notin, Exists, DoesNotExist - values : 값 - Exists, DoesNotExist일 때에는 비어야함 (그 두개는 key를 매칭하는 표현) DaemonSet . Jobs . CronJob . Service . DB는 stateless이기 때문에 RC, RS, DS, job, CJ으로 생성하면 안됨 ",
+    "url": "/docs/daily-learning-log/20210427.html",
+    "relUrl": "/docs/daily-learning-log/20210427.html"
+  },"113": {
+    "doc": "2021-04-27",
+    "title": "2021-04-27",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210427.html",
+    "relUrl": "/docs/daily-learning-log/20210427.html"
+  },"114": {
     "doc": "markdown manual",
     "title": "markdown manual",
     "content": "Summary () {: .text-delta } 1. TOC {:toc} Important Text can be **bold**, _italic_, or ~~strikethrough~~. [Link to another page](another-page). There should be whitespace between paragraphs. There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project. # [](#header-1)Header 1 This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere. ## [](#header-2)Header 2 > This is a blockquote following a header. > > When something is important enough, you do it even if the odds are not in your favor. ### [](#header-3)Header 3 ```js // Javascript code with syntax highlighting. var fun = function lang(l) { dateformat.i18n = require('./lang/' + l) return true; } ``` ```ruby # Ruby code with syntax highlighting GitHubPages::Dependencies.gems.each do |gem, version| s.add_dependency(gem, \"= #{version}\") end ``` #### [](#header-4)Header 4 `with code not transformed` * This is an unordered list following a header. * This is an unordered list following a header. * This is an unordered list following a header. ##### [](#header-5)Header 5 1. This is an ordered list following a header. 2. This is an ordered list following a header. 3. This is an ordered list following a header. ###### [](#header-6)Header 6 | head1 | head two | three |:-------------|:------------------|:------| ok | good swedish fish | nice | out of stock | good and plenty | nice | ok | good `oreos` | hmm | ok | good `zoute` drop | yumm | ### There's a horizontal rule below this. * * * ### Here is an unordered list: * Item foo * Item bar * Item baz * Item zip ### And an ordered list: 1. Item one 1. Item two 1. Item three 1. Item four ### And a nested list: - level 1 item - level 2 item - level 2 item - level 3 item - level 3 item - level 1 item - level 2 item - level 2 item - level 2 item - level 1 item - level 2 item - level 2 item - level 1 item ### Nesting an ol in ul in an ol - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) 1. level 2 item (ol) 1. level 2 item (ol) - level 3 item (ul) - level 3 item (ul) 1. level 4 item (ol) 1. level 4 item (ol) - level 3 item (ul) - level 3 item (ul) - level 1 item (ul) ### And a task list - [ ] Hello, this is a TODO item - [ ] Hello, this is another TODO item - [x] Goodbye, this item is done ### Small image ![](https://assets-cdn.github.com/images/icons/emoji/octocat.png) ### Large image ![](https://guides.github.com/activities/hello-world/branching.png) ### Definition lists can be used with HTML syntax. Name Godzilla Born 1952 Birthplace Japan Color Green #### Multiple description terms and values Term : Brief description of Term Longer Term : Longer description of Term, possibly more than one line Term : First description of Term, possibly more than one line : Second description of Term, possibly more than one line Term1 Term2 : Single description of Term1 and Term2, possibly more than one line Term1 Term2 : First description of Term1 and Term2, possibly more than one line : Second description of Term1 and Term2, possibly more than one line ### More code ``` Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this. ``` ``` The final element. ``` ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"111": {
+  },"115": {
     "doc": "Python-study",
     "title": "Python study index page",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"112": {
+  },"116": {
     "doc": "Python-study",
     "title": "Python-study",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"113": {
+  },"117": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"114": {
+  },"118": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
