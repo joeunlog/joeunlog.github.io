@@ -719,30 +719,48 @@
     "url": "/docs/daily-learning-log/20210429.html",
     "relUrl": "/docs/daily-learning-log/20210429.html"
   },"120": {
+    "doc": "2021-05-03",
+    "title": "Kubernetes",
+    "content": "과제 관련 - nfs . - nfs에 server, client가 있고, client에서 server에 접근할 때 계정을 nobody(nogroup에 속한)로 인식한다. - 즉, client의 root 사용자가 server의 nfs 경로에 접근하더라도 server 입장에서는 nobody라는 사용자가 접근한다고 인식한다. - 이 때, nfs 설정에서 no_root_squash 옵션을 설정하면 사용자를 nobody로 뭉개서 생각하는 것이 아닌 client에서 접근한 사용자 그대로 인식함 - nfs 경로 'sudo chmod -R 777 /nfs-volume'이 잘 적용됐다면 해당 옵션 없이도 아무나 접근이 가능했을 것 ",
+    "url": "/docs/daily-learning-log/20210503.html",
+    "relUrl": "/docs/daily-learning-log/20210503.html"
+  },"121": {
+    "doc": "2021-05-03",
+    "title": "Dynamic Provisioning",
+    "content": "Rook - Ceph . 참고 주소 https://ceph.io/ https://github.com/rook/rook.git Integrated Storage: 통합 스토리지 - Block : RBD(RADOS Block Device) - File : CephFS - Object : 일반적으로 다른 방법으로 사용하기 때문에 사용x https://rook.io/docs/rook/v1.6/ceph-quickstart.html kubespray에 적용 . kubespray vagrantfile 수정 ```sh # 추가되는 내용 unless File.exist?('./.disk/ceph1.vdi') vb.customize ['createmedium', 'disk', '--filename', './.disk/ceph1.vdi', '--size', 10240] end vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', './.disk/ceph1.vdi'] ``` ```sh # window powershell에서 vagrant reload ``` ```sh # VM에서 ansible -i ~/kubespray/inventory/mycluster/inventory.ini kube-node -a 'lsblk -f' git clone --single-branch --branch v1.6.1 https://github.com/rook/rook.git ########## Deploy Operator cd rook/cluster/examples/kubernetes/ceph kubectl create -f crds.yaml -f common.yaml -f operator.yaml # rook-ceph namespace 생성 확인 kubectl get ns kubectl get all -n rook-ceph ########## Create ceph cluster kubectl create -f cluster.yaml # worker node가 하나인 경우에는 # kubectl create -f cluster-test.yaml # pod 생성 확인 - 시간이 꽤 걸리기 때문에 watch 띄워놓고 대기 watch -n1 -d kubectl get pod -n rook-ceph # 필수 설치 항목 - 해당 항목들 구동 시작 확인 후 다음 단계로 # rook-ceph-crashcollector-k8s-w1 # rook-ceph-crashcollector-k8s-w2 # rook-ceph-crashcollector-k8s-w3 # rook-ceph-mgr-a # rook-ceph-mon-a # rook-ceph-mon-b # rook-ceph-mon-c # rook-ceph-operator # rook-ceph-osd-0 # rook-ceph-osd-1 # rook-ceph-osd-2 ########## Install toolbox kubectl create -f toolbox.yaml kubectl exec -n rook-ceph -it deployment/rook-ceph-tools -- ceph status # check !! # HEALTH_OK : O # HEALTH_WARN : O # HEALTH_ERR: X ########## Configure Block Storage kubectl create -f csi/rbd/storageclass.yaml ########## Configure File Storage kubectl create -f filesystem.yaml kubectl -n rook-ceph get pod -l app=rook-ceph-mds # check !! # rook-ceph-mds-myfs-a # rook-ceph-mds-myfs-b kubectl create -f csi/cephfs/storageclass.yaml ## Check Storage Class kubectl get storageclass # check !! # rook-ceph-block # rook-cephfs ``` yaml로 구성할 때 provisioner : 일종의 Driver, 정해져있음 종류는 아래 참조 주소 참고 https://kubernetes.io/ko/docs/concepts/storage/storage-classes/ ```sh kubectl get sc kubectl get sc rook-ceph-block -o yaml ``` sc로 pv를 만들고 동적 프로비저닝 - rook-ceph-block - 블록 스토리지 - RWO - ROX - rook-cephfs - 파일 스토리지 - RWO - RWX - ROX ```sh kubectl exec -n rook-ceph -it deployment/rook-ceph-tools -- ceph df # storage가 mirror(일종의 백업)되기 때문에 최대 용량이 10G씩이라고 보면 됨. 이게 기본적으로 8.5G 정도 사용 가능 ``` > 레이드가 뭔지 설규환강사님 강의하셨던거 복습해보기 myapp dynamic provisioning . ``` code myapp-pod.yaml apiVersion: v1 kind: Pod metadata: name: myapp-pod labels: app: myapp spec: containers: - image: ghcr.io/c1t1d0s7/go-myweb:alpine name: myapp ports: - containerPort: 8080 name: web volumeMounts: - name: ceph-vol mountPath: /ceph-vol volumes: - name: ceph-vol persistentVolumeClaim: claimName: myapp-pvc code myapp-pvc.yaml apiVersion: v1 kind: PersistentVolumeClaim metadata: name: myapp-pvc spec: accessModes: - ReadWriteOnce resources: requests: storage: 5Gi storageClassName: rook-ceph-block ``` mysql rook-ceph-block db 연동 오류 이유 . ```sh df -hT # 파일시스템 종류 확인 kubectl exec -it myapp-pod sh # 정상 구동된 pod에서 연동한 경로 확인해보기 ``` blockstorage(ex. ext4 file system)을 만들면 자동으로 특정 폴더(lost+found)가 생성됨 fsch(file system check) : booting 할 때 자동으로 진행, 수동도 가능 /etc/fstab에 booting시 fsch 여부, 순서 나와있음 ls -l 에서 권한 다음에 나오는 숫자는 hard link 갯수 갑작스런 종료로 인해 hard link가 깨지는 경우가 있음 이 때 fsch를 하게 되고, lost+found 폴더에 깨진 파일을 복구시켜줌 pvc로 db를 연동시키면 항상 db 초기화를 해야하는데, 해당 폴더에 뭔가가 있으면 구성 초기화를 하지 않는다. mysql pod 생성 때 lost+found 폴더 무시 옵션을 붙여야 함 ```sh args: [\"mysqld\", \"--ignore-db-dir=lost+found\"] ``` > 참고로, mariadb는 그런 옵션 없이도 잘 됨 mysql dynamic provisioning . ``` code mysql-pod.yaml apiVersion: v1 kind: Pod metadata: name: mysql-pod labels: app: mysql spec: containers: - image: mysql:5.7 name: mysql args: [\"mysqld\", \"--ignore-db-dir=lost+found\"] # ext4 파일 시스템의 lost+found 디렉토리 때문에 초기화 하지 못함 env: - name: MYSQL_ROOT_PASSWORD value: qwer1234 ports: - containerPort: 3306 name: mysql volumeMounts: - name: db-vol mountPath: /var/lib/mysql volumes: - name: db-vol persistentVolumeClaim: claimName: mysql-pvc code mysql-pvc.yaml apiVersion: v1 kind: PersistentVolumeClaim metadata: name: mysql-pvc spec: accessModes: - ReadWriteOnce resources: requests: storage: 2Gi storageClassName: rook-ceph-block ``` mariadb dynamic provisioning . ``` code mariadb-pod.yaml apiVersion: v1 kind: Pod metadata: name: mariadb-pod labels: app: mariadb spec: containers: - image: mariadb name: mariadb env: - name: MYSQL_ROOT_PASSWORD value: qwer1234 ports: - containerPort: 3306 name: mariadb volumeMounts: - name: db-vol mountPath: /var/lib/mysql volumes: - name: db-vol persistentVolumeClaim: claimName: mariadb-pvc code mariadb-pvc.yaml apiVersion: v1 kind: PersistentVolumeClaim metadata: name: mariadb-pvc spec: accessModes: - ReadWriteOnce resources: requests: storage: 2Gi storageClassName: rook-ceph-block ``` database 구성에 대하여 . block storage 형식의 database는 기본적으로 lock manager이라는 것이 있음 동시에 db를 수정할 수 없게 하는 것 그래서 RWX를 지원하지 않는다. 근데 굳이 file storage 안 쓰고 block storage를 써야하는 이유는 속도 때문 block storage가 훨씬 빠르다 그래서 Database는 주로 block storage로 구성 web 같은 경우는 file storage를 써도 속도 문제가 발생하지 않기 때문에 file storage를 사용 file storage의 주 목적은 공유! pvc를 지우지 않는 이상 데이터는 유지됨 pod랑 pvc만 올려놨다가 pod를 지우고 다시 생성해도 데이터는 그대로 유지 즉, pod와 volume의 life cycle을 분리시키는 것 > 온프레미스에서는 rook을 쓰는게 아닌 이상 동적 프로비저닝이 불가 > 책에서는 rook 안쓰고 AWS에서 실습함 p.428 default storage class . ```sh ########## set default storage class kubectl edit sc rook-cephfs metadata: annotations: storageclass.kubernetes.io/is-default-class: \"true\" # annotations(참조) 추가 ########## 적용 # pvc에서 storageClassName: \"\" # 혹은 아예 지정을 안하면 default storage class를 사용하겠다는 뜻 # 어떤 메뉴얼은 \"\"이고 어떤 메뉴얼은 지정을 하지 말라고 하는데 # 실습 때에는 지정하지 않은 경우에만 생성이 됐음 ``` ",
+    "url": "/docs/daily-learning-log/20210503.html",
+    "relUrl": "/docs/daily-learning-log/20210503.html"
+  },"122": {
+    "doc": "2021-05-03",
+    "title": "2021-05-03",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210503.html",
+    "relUrl": "/docs/daily-learning-log/20210503.html"
+  },"123": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"121": {
+  },"124": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"122": {
+  },"125": {
     "doc": "Python-study",
     "title": "Python study index page",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"123": {
+  },"126": {
     "doc": "Python-study",
     "title": "Python-study",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"124": {
+  },"127": {
     "doc": "Joeunvit Study log",
     "title": "Joeunvit Study log",
     "content": "#### Python #### Network #### AWS #### MySQL #### Docker #### Ansible #### Kubernetes ",
