@@ -737,34 +737,106 @@
     "url": "/docs/daily-learning-log/20210503.html",
     "relUrl": "/docs/daily-learning-log/20210503.html"
   },"123": {
-    "doc": "Daily-learning-log",
-    "title": "Daily learning log index page",
+    "doc": "2021-05-04",
+    "title": "Kubernetes",
     "content": " ",
-    "url": "/docs/daily-learning-log/",
-    "relUrl": "/docs/daily-learning-log/"
+    "url": "/docs/daily-learning-log/20210504.html",
+    "relUrl": "/docs/daily-learning-log/20210504.html"
   },"124": {
-    "doc": "Daily-learning-log",
-    "title": "Daily-learning-log",
-    "content": " ",
-    "url": "/docs/daily-learning-log/",
-    "relUrl": "/docs/daily-learning-log/"
+    "doc": "2021-05-04",
+    "title": "Probe",
+    "content": "참고 주소 > https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/ 컨테이너에서 kubelet에 의해 주기적으로 수행되는 진단 - Probe의 종류 - livenessProbe : 컨테이너 동작 여부 - readinessProbe : 컨테이너 요청 ready 여부 - startupProbe : 컨테이너 내 App 시작 여부 - 컨테이너 진단 핸들러 종류 - ExecAction : 컨테이너 내에서 지정 명령어 실행 : 상태코드 0으로 종료 시 진단 성공으로 간주 - TCPSocketAction : 컨테이너 IP 주소에 대한 TCP 검사 : 특정 Port가 열린 경우 성공으로 간주 - HTTPGetAction : 컨테이너 IP 주소에 대한 HTTP get 요청 수행 : HTTP 응답 코드가 200~399이면 성공으로 간주 - Probe 결과 종류 - Success : 성공 - Failure : 실패 - Unknown : 진단 실패 : 액션 수행 x livenessProbe 예시 . ```sh # liveness probe 예시 1 apiVersion: v1 kind: Pod metadata: name: liveness-pod spec: containers: - name: httpd image: httpd ports: - name: http containerPort: 80 protocol: TCP livenessProbe: httpGet: path: / port: 80 # liveness probe 예시 2 apiVersion: v1 kind: Pod metadata: name: liveness3-pod spec: containers: - name: db image: mysql:5.7 env: - name: MYSQL_ROOT_PASSWORD value: qwer1234 ports: - name: mysql containerPort: 3306 protocol: TCP livenessProbe: tcpSocket: port: 3306 # liveness probe 예시 3 apiVersion: v1 kind: Pod metadata: name: liveness4-pod spec: containers: - name: db image: mysql:5.7 env: - name: MYSQL_ROOT_PASSWORD value: qwer1234 ports: - name: mysql containerPort: 3306 protocol: TCP livenessProbe: exec: command: - \"mysqladmin\" - \"ping\" - \"-uroot\" - \"-p${MYSQL_ROOT_PASSWORD}\" ``` readinessProbe 예시 . ```sh # readiness probe 예시 1 apiVersion: v1 kind: Service metadata: name: ready-svc spec: selector: app: ready ports: - protocol: TCP port: 80 targetPort: 8080 --- apiVersion: apps/v1 kind: ReplicaSet metadata: name: ready2 labels: app: ready spec: replicas: 2 selector: matchLabels: app: ready template: metadata: labels: app: ready spec: containers: - name: web image: ghcr.io/c1t1d0s7/go-myweb:alpine ports: - containerPort: 8080 protocol: TCP readinessProbe: exec: command: - \"ls\" - \"/tmp/ready\" # monitoring watch kubectl get po,svc,ep kubectl run test -it --rm --image ghcr.io/c1t1d0s7/network-multitool bash watch curl http://ready-svc ``` ```sh kubectl exec -- touch /tmp/ready kubectl exec -- rm /tmp/ready ``` startupProbe 예시 . ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: start labels: app: start spec: replicas: 2 selector: matchLabels: app: start template: metadata: labels: app: start spec: containers: - name: web image: ghcr.io/c1t1d0s7/go-myweb:alpine ports: - containerPort: 8080 protocol: TCP startupProbe: httpGet: path: /health port: 8080 readinessProbe: exec: command: - \"ls\" - \"/tmp/ready\" --- apiVersion: v1 kind: Service metadata: name: start-svc spec: selector: app: start ports: - protocol: TCP port: 80 targetPort: 8080 ``` ",
+    "url": "/docs/daily-learning-log/20210504.html",
+    "relUrl": "/docs/daily-learning-log/20210504.html"
   },"125": {
-    "doc": "Python-study",
-    "title": "Python study index page",
-    "content": " ",
-    "url": "/docs/python-study/",
-    "relUrl": "/docs/python-study/"
+    "doc": "2021-05-04",
+    "title": "Deployment",
+    "content": "참조 주소 > https://kubernetes.io/ko/docs/concepts/workloads/controllers/deployment/ pod와 replicaset을 조절 : 선언적 업데이트 모든 deployment의 롤아웃 기록은 시스템에 남아있기 때문에 언제든지 롤백 가능 Deployment 예시 . ```sh apiVersion: apps/v1 kind: Deployment metadata: name: nginx-deployment labels: app: nginx spec: replicas: 3 selector: matchLabels: app: nginx template: metadata: labels: app: nginx spec: containers: - name: nginx image: nginx:1.14.2 ports: - containerPort: 80 ``` 롤아웃 방법 예시 . ```sh kubectl apply kubectl edit kubectl patch kubectl replace kubectl set image deploy nginx-deployment nginx=nginx:1.19 # kubectl set image = ``` 히스토리에 코멘트 남기기 . - 명령어 ```sh kubectl --record ``` - annotation ```sh metadata: annotations: kubernetes.io/change-cause: \"XXX\" ``` 롤아웃 확인 명령어 . ```sh kubectl rollout history kubectl rollout status -w ``` 롤백 예시 . ```sh kubectl rollout undo --to-revision=X ``` Six Strategies for Application Deployment . 참조 주소 https://thenewstack.io/deployment-strategies/ - Recreate: Version A is terminated then version B is rolled out. - Ramped (also known as rolling-update or incremental): Version B is slowly rolled out and replacing version A. - Blue/Green: Version B is released alongside version A, then the traffic is switched to version B. - Canary: Version B is released to a subset of users, then proceed to a full rollout. - A/B testing: Version B is released to a subset of users under specific condition. - Shadow: Version B receives real-world traffic alongside version A and doesn’t impact the response. > kubernetes에는 Recreate와 Ramped만 구현되어 있다. ",
+    "url": "/docs/daily-learning-log/20210504.html",
+    "relUrl": "/docs/daily-learning-log/20210504.html"
   },"126": {
-    "doc": "Python-study",
-    "title": "Python-study",
-    "content": " ",
-    "url": "/docs/python-study/",
-    "relUrl": "/docs/python-study/"
+    "doc": "2021-05-04",
+    "title": "StatefulSet",
+    "content": "```sh apiVersion: apps/v1 kind: StatefulSet metadata: name: myapp-sts spec: selector: matchLabels: app: myapp serviceName: myapp-svc-headless replicas: 1 template: metadata: labels: app: myapp spec: containers: - name: myapp image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 --- apiVersion: v1 kind: Service metadata: name: myapp-svc-headless spec: selector: app: myapp clusterIP: None ports: - name: http port: 80 targetPort: 8080 ``` ```sh kubectl scale sts myapp-sts --replicas=3 ``` stateful만 상태 저장, 나머지 두 개는 stateless임 하나가 죽으면 다시 만들 때 똑같은 이름으로 만든다 뭐 하나가 죽으면 다 죽을 때까지 새로운 것을 만들지 않는다 svc는 무조건 헤드리스 bash명령 쓸 수 있게 나오고 여러 가지 설정을 함 pod마다 다른 storage를 가지고 있어서 데이터 불균형 발생 애초에 얘는 pod마다 상태를 가지게 하는게 목표인 애라 그게 당연함 sharding db 복제 - multi master ",
+    "url": "/docs/daily-learning-log/20210504.html",
+    "relUrl": "/docs/daily-learning-log/20210504.html"
   },"127": {
+    "doc": "2021-05-04",
+    "title": "2021-05-04",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210504.html",
+    "relUrl": "/docs/daily-learning-log/20210504.html"
+  },"128": {
+    "doc": "2021-05-06",
+    "title": "Kubernetes",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210506.html",
+    "relUrl": "/docs/daily-learning-log/20210506.html"
+  },"129": {
+    "doc": "2021-05-06",
+    "title": "StatefulSet",
+    "content": "참고 주소 > https://kubernetes.io/ko/docs/concepts/workloads/controllers/statefulset/ - 특징 - deployment와 scaling을 관리 - pod의 순서 및 고유성 보장 - 고유한 파드 이름 : Controller-N ",
+    "url": "/docs/daily-learning-log/20210506.html",
+    "relUrl": "/docs/daily-learning-log/20210506.html"
+  },"130": {
+    "doc": "2021-05-06",
+    "title": "App Customization",
+    "content": "Docker와 비교 . Docker의 CMD -> Kubernetes args Docker의 ENTRYPOINT -> Kubernetes command 예시 . ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: myapp labels: app: myapp spec: replicas: 3 selector: matchLabels: app: myapp template: metadata: labels: app: myapp spec: containers: - name: myapp image: ghcr.io/c1t1d0s7/go-myweb args: - \"-port=8888\" env: - name: MESSAGE value: \"HELLO MESSAGE!!!\" ports: - containerPort: 8888 protocol: TCP ``` ConfigMap . 참고 주소 > https://kubernetes.io/docs/concepts/configuration/configmap/ - 특징 - key: value 형태 - 기밀이 아닌 데이터 저장 : 암호화 x - 포함하는 데이터 - 환경 변수 : .spec.containers.env.valueFrom - key : 변수명 - value : 변수값 - Volume : .spec.volumes.configMap : .spec.volumes.secret - 설정 파일을 제공하기 위함 - key : 파일명 - value : 파일내용 - ConfigMap과 Secret의 차이점 - ConfigMap은 평문이고 Secret은 BASE64 인코딩(암호화x) - Secret은 암호화키, 패스워드 인증서 참고주소 > https://www.vaultproject.io/ Configmap 예시 . ```sh kubectl create cm myconfig1 --from-literal=key1=value1 kubectl create cm myconfig2 --from-literal=key2=value2 --from-literal=key22=value22 kubectl create cm myconfig3 --from-file=message.txt kubectl create cm myconfig4 --from-file=msg=message.txt # 구성 예시 1 apiVersion: v1 kind: ConfigMap metadata: name: myconfig5 data: key5: value5 key55: value55 --- apiVersion: v1 kind: Pod metadata: name: cmtest spec: containers: - name: web image: httpd env: - name: MESSAGE valueFrom: configMapKeyRef: key: msg name: myconfig4 volumeMounts: - name: mycon mountPath: /tmp volumes: - name: mycon configMap: name: myconfig4 # 구성 예시 2 apiVersion: v1 kind: ConfigMap metadata: name: myconfig6 data: svc-port: \"8888\" svc-msg: \"hello configmap!\" --- apiVersion: v1 kind: Service metadata: name: myapp spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: web --- apiVersion: apps/v1 kind: ReplicaSet metadata: name: myapp labels: app: myapp spec: replicas: 1 selector: matchLabels: app: myapp template: metadata: labels: app: myapp spec: containers: - name: myapp image: ghcr.io/c1t1d0s7/go-myweb args: - \"-port=$(PORT)\" env: - name: PORT valueFrom: configMapKeyRef: name: myconfig6 key: svc-port - name: MESSAGE valueFrom: configMapKeyRef: name: myconfig6 key: svc-msg ports: - name: web containerPort: 8888 protocol: TCP ``` nginx Gzip 압축 기능 활성화 . ```sh # 요청 양식 # Accept-Encoding: gzip, deflate curl -H \"Accept-Encoding: gzip, deflate\" http://nginx-svc -v # 응답 양식 # Content-Encoding: gzip curl -H \"Accept-Encoding: gzip\" http://nginx-svc -I ``` nginx Gzip 사용 예시 . ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: nginx labels: app: nginx spec: replicas: 1 selector: matchLabels: app: nginx template: metadata: labels: app: nginx spec: containers: - name: nginx image: nginx ports: - name: web containerPort: 80 protocol: TCP volumeMounts: - name: nginx-gzip-cfg mountPath: /etc/nginx/conf.d volumes: - name: nginx-gzip-cfg configMap: name: nginx-gzip --- apiVersion: v1 kind: ConfigMap metadata: name: nginx-gzip data: nginx-gzip.conf: | server { listen 80; server_name localhost; gzip on; gzip_types text/plain application/xml; location / { root /usr/share/nginx/html; index index.html index.htm; } error_page 500 502 503 504 /50x.html; location = /50x.html { root /usr/share/nginx/html; } } --- apiVersion: v1 kind: Service metadata: name: nginx-svc spec: selector: app: nginx ports: - protocol: TCP port: 80 targetPort: web ``` ",
+    "url": "/docs/daily-learning-log/20210506.html",
+    "relUrl": "/docs/daily-learning-log/20210506.html"
+  },"131": {
+    "doc": "2021-05-06",
+    "title": "2021-05-06",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210506.html",
+    "relUrl": "/docs/daily-learning-log/20210506.html"
+  },"132": {
+    "doc": "2021-05-07",
+    "title": "Kubernetes",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210507.html",
+    "relUrl": "/docs/daily-learning-log/20210507.html"
+  },"133": {
+    "doc": "2021-05-07",
+    "title": "minikube 배포",
+    "content": "```sh # 방법 1 minikube start --cpus 2 --memory 2048 --driver virtualbox -- kubernetes-version 1.18.18 # 방법 2 minikube config set cpus 2 minikube config set memory 2048 minikube config set driver virtualbox minikube config set kubernetes-version 1.18.18 minikube config view # minikube run minikube start # minikube run & node 개수 지정 minikube start --nodes=3 # metallb minikube service list minikube addons list minikube ip 192.168.99.102 minikube addons configure metallb -- Enter Load Balancer Start IP: 192.168.99.200 -- Enter Load Balancer End IP: 192.168.99.220 minikube addons enable metallb # ingress minikube addons enable ingress # node 확장 minikube node add # node 확인 minikube node list ``` Secret . BASE64로 인코딩 ConfigMap 디스크에 저장 Secret 메모리에만 저장 - Data Type - docker-registry (kubernetes.io/dockerconfigjson) - 컨테이너 레지스트리 인증 정보 1. 이미지 pull (ex. nginx, httpd, go-myweb) 2. 이미지에 docker tag 붙이기 3. docker 로그인 4. 이미지 push 5. Docker hub Private 저장소 6. pod, rs, deploy resource 생성 7. docker-registry secret 생성 ```sh kubectl create secret docker-registry --docker-username= --docker-password='' --docker-email= ``` 8. pod, rs, deploy resource 생성 ```sh spec: imagePullSecrets: - name: ``` - generic (Opaque) - 일반적인 데이터 ```sh kubectl create secret generic secret1 --from-literal=key1=value1 echo \"P@ssw0rd\" > pwd.txt kubectl create secret generic secret2 --from-file=pwd.txt ``` - tls (kubernetes.io/tls) - TLS 인증서, TLS 키 ```sh mkdir tls openssl genrsa -out tls/my.key 2048 openssl req -new -x509 -key tls/my.key -out tls/my.crt -days 365 -subj /CN=my.abc.com kubectl create secret tls mytls --cert=tls/my.crt --key=tls/my.key ``` Secret env, volume 예시 . ```sh apiVersion: v1 kind: Pod metadata: name: web2 spec: containers: - name: web image: httpd env: - name: MESSAGE1 valueFrom: secretKeyRef: name: mysec key: key1 - name: MESSAGE2 valueFrom: secretKeyRef: name: mysec key: key2 # kubectl create secret mysec \\ # --from-literal=key1=value1 \\ # --from-listeral=key2=value2 # MESSAGE1=value1 # MESSAGE2=value2 volumeMounts: - name: secret-vol mountPath: /tmp # key: 파일명 # value: 파일내용 # /tmp/key1: value1 # /tmp/key2: value2 volumes: - name: secret-vol secret: secretName: mysec ``` Secret yaml 예시 . ```sh apiVersion: v1 kind: Secret metadata: name: type: data: : ``` 인코딩 방법 . ```sh echo \"P@ssw0rd\" | base64 ``` 디코딩 방법 . ```sh echo \"UEBzc3cwcmQK\" | base64 --decode ``` nginx에 tls 적용 . ```sh cat nginx-tls.conf server { listen 80; listen 443 ssl; server_name my.abc.com; ssl_certificate /etc/nginx/tls/tls.crt; ssl_certificate_key /etc/nginx/tls/tls.key; ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; ssl_ciphers HIGH:!aNULL:!MD5; location / { root /usr/share/nginx/html; index index.html index.htm; } error_page 500 502 503 504 /50x.html; location = /50x.html { root /usr/share/nginx/html; } } ``` ```sh apiVersion: v1 kind: Pod metadata: name: nginx-tls labels: app: nginx-tls spec: containers: - name: nginx image: nginx volumeMounts: - name: nginx-tls-conf mountPath: /etc/nginx/conf.d - name: nginx-tls-cert mountPath: /etc/nginx/https ports: - name: http containerPort: 80 - name: https containerPort: 443 volumes: - name: nginx-tls-conf configMap: name: nginx-tls-conf - name: nginx-tls-cert secret: secretName: nginx-tls-cert --- apiVersion: v1 kind: ConfigMap metadata: name: nginx-tls-conf data: nginx-tls.conf: | server { listen 80; listen 443 ssl; server_name my.abc.com; ssl_certificate /etc/nginx/https/tls.crt; ssl_certificate_key /etc/nginx/https/tls.key; ssl_protocols TLSv1.2 TLSv1.3; ssl_ciphers HIGH:!aNULL:!MD5; location / { root /usr/share/nginx/html; index index.html index.htm; } error_page 500 502 503 504 /50x.html; location = /50x.html { root /usr/share/nginx/html; } } --- apiVersion: v1 kind: Secret metadata: name: nginx-tls-cert type: kubernetes.io/tls data: tls.crt: | ABC tls.key: | ABC --- apiVersion: v1 kind: Service metadata: name: nginx-svc spec: type: LoadBalancer selector: app: nginx-tls ports: - name: http port: 80 targetPort: 80 - name: https port: 443 targetPort: 443 ``` ```sh curl https://x.x.x.x -k -v ``` Ingress에 secret, tls termination . ```sh # ingress에 tls 형식 apiVersion: networking.k8s.io/v1beta1 kind: Ingress metadata: name: myapp-ing spec: tls: - hosts: - secretName: rules: - host: http: paths: - path: backend: serviceName: servicePort: ``` ```sh apiVersion: apps/v1 kind: Deployment metadata: name: nginx-term labels: app: nginx-term spec: replicas: 3 selector: matchLabels: app: nginx-term template: metadata: labels: app: nginx-term spec: containers: - name: nginx image: nginx ports: - name: http containerPort: 80 --- apiVersion: v1 kind: Secret metadata: name: nginx-term-cert type: kubernetes.io/tls data: tls.crt: | # 엄청 긴 인코딩 값 tls.key: | # 엄청 긴 인코딩 값 --- apiVersion: v1 kind: Service metadata: name: nginx-svc spec: type: ClusterIP selector: app: nginx-term ports: - name: http port: 80 targetPort: 80 --- apiVersion: networking.k8s.io/v1beta1 kind: Ingress metadata: name: nginx-term spec: tls: - hosts: - www.192-168-201-23.nip.io secretName: nginx-term-cert rules: - host: www.192-168-201-23.nip.io http: paths: - path: / backend: serviceName: nginx-svc servicePort: 80 ``` ```sh # 확인 방법 1 curl https://my.abc.com --resolv my.abc.com:443:192.168.201.21 -k -v # 확인 방법 2 sudo vi /etc/hosts 192.168.201.21 my.abc.com curl https://my.abc.com -k -v # 확인 방법 3 : 윈도우 c:\\windows\\system32\\derivers\\etc\\hosts # 관리자 권한으로 Wildcard DNS 서버 https://nip.io/ https://sslip.io host www.1-1-1-1.nip.io ``` ",
+    "url": "/docs/daily-learning-log/20210507.html",
+    "relUrl": "/docs/daily-learning-log/20210507.html"
+  },"134": {
+    "doc": "2021-05-07",
+    "title": "2021-05-07",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210507.html",
+    "relUrl": "/docs/daily-learning-log/20210507.html"
+  },"135": {
     "doc": "Joeunvit Study log",
     "title": "Joeunvit Study log",
     "content": "#### Python #### Network #### AWS #### MySQL #### Docker #### Ansible #### Kubernetes ",
     "url": "/docs/",
     "relUrl": "/docs/"
+  },"136": {
+    "doc": "Python-study",
+    "title": "Python study index page",
+    "content": " ",
+    "url": "/docs/python-study/",
+    "relUrl": "/docs/python-study/"
+  },"137": {
+    "doc": "Python-study",
+    "title": "Python-study",
+    "content": " ",
+    "url": "/docs/python-study/",
+    "relUrl": "/docs/python-study/"
+  },"138": {
+    "doc": "Daily-learning-log",
+    "title": "Daily learning log index page",
+    "content": " ",
+    "url": "/docs/daily-learning-log/",
+    "relUrl": "/docs/daily-learning-log/"
+  },"139": {
+    "doc": "Daily-learning-log",
+    "title": "Daily-learning-log",
+    "content": " ",
+    "url": "/docs/daily-learning-log/",
+    "relUrl": "/docs/daily-learning-log/"
   }
 }
