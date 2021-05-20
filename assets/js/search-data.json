@@ -871,7 +871,7 @@
   },"145": {
     "doc": "2021-05-12",
     "title": "Helm",
-    "content": "kubectl이 설치되어 있고 config파일이 있는 환경에서 쓸 수 있는 패키지 매니저 Helm 설치 . snap이라는 패키지 관리자는 거의 모든 linux 환경에서 쓰는 건데 안정적이지 않아서 사용하지 않을 것 script를 이용하여 설치 참고주소 > https://helm.sh/ko/docs/intro/install/ ```sh curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 chmod +x get_helm.sh ./get_helm.sh helm version # 우리는 helm3 사용 ``` - completion (자동완성) ```sh helm completion bash | sudo tee /etc/bash_completion.d/helm exec bash ``` Helm 개요 . - 차트 : 헬름 패키지 - 저장소 : 차트를 모아두고 공유하는 장소 - 릴리스 : 쿠버네티스 클러스터에서 구동되는 차트의 인스턴스 혹은 설치된 차트 - 찾기 ```sh helm search hub wordpress # hub에서 wordpress를 찾는다는 의미 helm search hub mysql ``` - repo 추가 ```sh helm repo add stable https://charts.helm.sh/stable # 안정적인걸 관습적으로 stable이라고 하는데 꼭 stable일 필요는 없다 ``` - repo 삭제 ```sh helm repo remove stable ``` - repo 확인 ```sh helm repo list ``` - repo에서 찾기 ```sh helm search repo mysql # 결과에서 stable/로 시작하는 것들은 내가 repo를 stable로 지정했기 때문 ``` > 주로 다 deprecated 되어있음 : 가능하면 artifact hub를 써라! - 차트 설치 = 릴리즈 만들기 : value 변경 없이 ```sh helm install / helm install happy-panda stable/mariadb ``` - 차트 설치 = 릴리즈 만들기 : value 변경 : customize ```sh vi values.yaml # 이름 이무거나 상관 없음 # 덮어쓰고자 하는 내용만 차트의 values.yaml 참고해서 똑같이 작성 service: type: LoadBalancer helm install happy-panda stable/mariadb -f values.yaml ``` > value가 적용되는 부분에서 많은 문제가 발생할 수 있음 : 이 경우 아예 실행이 잘 안 될 수도 있음 > 그런 문제가 생길 경우 upgrade나 rollback에 문제가 생길 수 있으며 > 이런 경우에는 수동으로 수정을 해야함 - 릴리즈 삭제 ```sh helm uninstall helm uninstall happy-panda ``` > helm2랑 helm3랑 구조적으로 달라서 명령어도 차이가 나기 때문에 자료를 찾아서 사용할 때에는 그게 2인지 3인지 잘 보고 써야함 > helm 2는 문제가 많으므로 3을 권장함 - 설치된 릴리즈 목록 확인 ```sh helm list ``` - 가동 resource 확인 : 릴리즈가 설치되면 거기에 포함된 resource들이 자동으로 구동됨 ```sh kubectl get all kubectl get configmap kubectl get secret helm status happy-panda ``` - helm show - all : chart + readme + values - chart : 차트 정보(패키지 정보) ex. 버전, etc : 차트가 저장되어 있는 곳(repo)의 해당 차드의 Chart.yaml - readme : README.md - values : 사용자가 설정할 수 있는 값들 ```sh helm show all stable/mysql helm show chart stable/mysql helm show readme stable/mysql helm show values stable/mysql ``` - 차트 구조 - Chart.yaml - README.md - values.yaml - /templates - helm upgrade ```sh helm upgrate -f / helm upgrade -f value.yaml happy-panda stable/mariadb # Revision이 2로 바뀜 : upgrade 할 때마다 올라가는 듯 ``` - helm history ```sh helm history happy-panda ``` - helm rollback ```sh helm rollback helm rollback happy-panda 1 ``` - 차트 만들기 ```sh helm create helm create abc # 차트이름과 같은 폴더가 생기고 그 안에는 reference가 자동 생성됨 ``` - 차트 패키징 ```sh helm package helm package abc # abc-0.1.0.tgz 파일이 생성됨 : 이 파일을 repo에 올리면 됨 ``` - local에 있는 차트 설치 ```sh helm install helm install newabc ./abc-0.1.0.tgz ``` > kubectl 명령어 칠 때, 자동완성 편하게 하려면 kubectl -n 형식이 좋음 ",
+    "content": "kubectl이 설치되어 있고 config파일이 있는 환경에서 쓸 수 있는 패키지 매니저 Helm 설치 . snap이라는 패키지 관리자는 거의 모든 linux 환경에서 쓰는 건데 안정적이지 않아서 사용하지 않을 것 script를 이용하여 설치 참고주소 > https://helm.sh/ko/docs/intro/install/ ```sh curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 chmod +x get_helm.sh ./get_helm.sh helm version # 우리는 helm3 사용 ``` - completion (자동완성) ```sh helm completion bash | sudo tee /etc/bash_completion.d/helm exec bash ``` Helm 개요 . - 차트 : 헬름 패키지 - 저장소 : 차트를 모아두고 공유하는 장소 - 릴리스 : 쿠버네티스 클러스터에서 구동되는 차트의 인스턴스 혹은 설치된 차트 - 찾기 ```sh helm search hub wordpress # hub에서 wordpress를 찾는다는 의미 helm search hub mysql ``` - repo 추가 ```sh helm repo add stable https://charts.helm.sh/stable # 안정적인걸 관습적으로 stable이라고 하는데 꼭 stable일 필요는 없다 ``` - repo 삭제 ```sh helm repo remove stable ``` - repo 확인 ```sh helm repo list ``` - repo에서 찾기 ```sh helm search repo mysql # 결과에서 stable/로 시작하는 것들은 내가 repo를 stable로 지정했기 때문 ``` > 주로 다 deprecated 되어있음 : 가능하면 artifact hub를 써라! - 차트 설치 = 릴리즈 만들기 : value 변경 없이 ```sh helm install / helm install happy-panda stable/mariadb ``` - 차트 설치 = 릴리즈 만들기 : value 변경 : customize ```sh vi values.yaml # 이름 이무거나 상관 없음 # 덮어쓰고자 하는 내용만 차트의 values.yaml 참고해서 똑같이 작성 service: type: LoadBalancer helm install happy-panda stable/mariadb -f values.yaml ``` > value가 적용되는 부분에서 많은 문제가 발생할 수 있음 : 이 경우 아예 실행이 잘 안 될 수도 있음 > 그런 문제가 생길 경우 upgrade나 rollback에 문제가 생길 수 있으며 > 이런 경우에는 수동으로 수정을 해야함 - 릴리즈 삭제 ```sh helm uninstall helm uninstall happy-panda ``` > helm2랑 helm3랑 구조적으로 달라서 명령어도 차이가 나기 때문에 자료를 찾아서 사용할 때에는 그게 2인지 3인지 잘 보고 써야함 > helm 2는 문제가 많으므로 3을 권장함 - 설치된 릴리즈 목록 확인 ```sh helm list ``` - 가동 resource 확인 : 릴리즈가 설치되면 거기에 포함된 resource들이 자동으로 구동됨 ```sh kubectl get all kubectl get configmap kubectl get secret helm status happy-panda ``` - helm show - all : chart + readme + values - chart : 차트 정보(패키지 정보) ex. 버전, etc : 차트가 저장되어 있는 곳(repo)의 해당 차드의 Chart.yaml - readme : README.md - values : 사용자가 설정할 수 있는 값들 ```sh helm show all stable/mysql helm show chart stable/mysql helm show readme stable/mysql helm show values stable/mysql ``` - 차트 구조 - Chart.yaml - README.md - values.yaml - /templates - helm upgrade ```sh helm upgrade -f / helm upgrade -f value.yaml happy-panda stable/mariadb # Revision이 2로 바뀜 : upgrade 할 때마다 올라가는 듯 ``` - helm history ```sh helm history happy-panda ``` - helm rollback ```sh helm rollback helm rollback happy-panda 1 ``` - 차트 만들기 ```sh helm create helm create abc # 차트이름과 같은 폴더가 생기고 그 안에는 reference가 자동 생성됨 ``` - 차트 패키징 ```sh helm package helm package abc # abc-0.1.0.tgz 파일이 생성됨 : 이 파일을 repo에 올리면 됨 ``` - local에 있는 차트 설치 ```sh helm install helm install newabc ./abc-0.1.0.tgz ``` > kubectl 명령어 칠 때, 자동완성 편하게 하려면 kubectl -n 형식이 좋음 ",
     "url": "/docs/daily-learning-log/20210512.html",
     "relUrl": "/docs/daily-learning-log/20210512.html"
   },"146": {
@@ -881,34 +881,130 @@
     "url": "/docs/daily-learning-log/20210512.html",
     "relUrl": "/docs/daily-learning-log/20210512.html"
   },"147": {
-    "doc": "Python-study",
-    "title": "Python study index page",
+    "doc": "2021-05-13",
+    "title": "Kubernetes",
     "content": " ",
-    "url": "/docs/python-study/",
-    "relUrl": "/docs/python-study/"
+    "url": "/docs/daily-learning-log/20210513.html",
+    "relUrl": "/docs/daily-learning-log/20210513.html"
   },"148": {
-    "doc": "Python-study",
-    "title": "Python-study",
-    "content": " ",
-    "url": "/docs/python-study/",
-    "relUrl": "/docs/python-study/"
+    "doc": "2021-05-13",
+    "title": "kubernetes version skew(차이)",
+    "content": "각 버전은 1년간 지원 : 1년 지나기 전에 업데이트 해야 보안상 안전 참고주소 > https://kubernetes.io/ko/docs/setup/release/version-skew-policy/ > https://github.com/kubernetes/kubernetes - 업그레이드 목록 - kube-apiserver ; +1 - kubelet ; -2 - kube-controller-manager ; -1 - kube-scheduler ; -1 - kube-cloud-controller-manager ; -1 - kubectl ; +-1 순차적 업데이트 원리 . 동시에 업데이트 해버리면 cluster가 멈추게 되므로 순차적인 업데이트 필요 순차적으로 업데이트 하는 와중에는 클러스터 내에서도 버전 차이가 발생하게 됨 docs의 skew-policy에서 지원되는 버전 차이에 대한 내용을 명시함 이 차이를 확인하고, 순차적으로 업데이트 진행 즉, 현재 3개의 component가 1.20이며 1.21로 업데이트하고 한다면 docs의 skew 중 1.21과 1.20이 호환된다는 것을 확인한 뒤 각 component들을 순차적으로 업데이트 - skew에 따라 정해지는 업데이트 순서 ; ansible이 자동으로 해줌 ; 내용만 이해하자 ! 1. kube-apiserver 2. kube-contoller-manager, kube-scheduler, kube-cloud-controller-manager 3. kubelet 4. kube-proxy 5. kubectl 업그레이드 . 참고주소 > https://kubespray.io/#/docs/upgrades 프로메테우스 실습 하려고 하는데 resource를 많이 차지하니까 - 노드 하나 제거 - 나머지 노드들 resource(cpu,memory) 늘려주고 - master도 worker로 사용할 수 있도록 변경 ```sh # delete node : ~/kubespray 에서! ansible-playbook -i inventory/mycluster/inventory.ini remove-node.yml -b -e \"node=k8s-w3\" # 잘 제거 됐는지 확인 kubectl get nodes # inventory.ini file 수정 all, node에서 k8s-w3 주석처리 node에 k8s-m1 추가 # 업그레이드 하면 k8s-m1의 Taint가 자동으로 해제되어 있을 것 # graceful update 실행 : node를 cordon해야하는데 master는 1개뿐이라 cordon하면 멈춰버려서 안됐던 것 ! # 따라서 unsafe upgrade 해야함 ansible-playbook -i inventory/mycluster/inventory.ini upgrade-cluster.yml -b -e kube_version=v1.19.10 # 에러떴음 ! 아래는 에러 없애는 과정 cp inventory/mycluster/inventory.ini ~ cd rm -rf kubespray/ git clone -b release-2.15 https://github.com/kubernetes-sigs/kubespray.git cd kubespray/ cp -r inventory/sample inventory/mycluster cp ~/inventory.ini inventory/mycluster/ # update 다시 실행 ansible-playbook -i inventory/mycluster/inventory.ini upgrade-cluster.yml -b -e kube_version=v1.19.10 # unsafe upgrade ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b -e kube_version=v1.19.10 -e upgrade_cluster_setup=true # update 잘 됐는지 확인 kubectl get nodes # w3 VM halt : window에서 vagrant halt k8s-w3 # 잘 중단됐는지 확인 vagrant status # vagrantfile 수정 vagrant file에서 w3부분 주석처리 m1, w1, w2 resource 수정 : memory 3060 w3의 disk를 m1으로 옮김 # VM 재부팅 vagrant reload ``` ",
+    "url": "/docs/daily-learning-log/20210513.html",
+    "relUrl": "/docs/daily-learning-log/20210513.html"
   },"149": {
-    "doc": "Daily-learning-log",
-    "title": "Daily learning log index page",
-    "content": " ",
-    "url": "/docs/daily-learning-log/",
-    "relUrl": "/docs/daily-learning-log/"
+    "doc": "2021-05-13",
+    "title": "Prometheus",
+    "content": "monitoring tool - Infrastructure - BM, VM, Container : CPU, Memory, Disk, Network - Kubernetes cluster - Application - APM : Application Performance Monitor - http 요청/응답 : RTT - http 응답 시간 - http 응답 코드 - 쿠버네티스에서 모니터링 - Heapster + influxdb : 메트릭 저장 ; 프로젝트가 중단되었음 - metrics-server : cpu, memory 실시간 모니터링만 가능 - Prometheus - Thanos, coretex를 이용하여 long term도 가능 Prometheus Architecture . 참고주소 > https://prometheus.io/docs/introduction/overview/ node에 pod 형태로 배포 측정 값들을 Retrieval(회수) service discovery : kubernetes의 api server한테 질의해서 측정대상 확인 길게 실행하는 것들은 그 자체를 pull해서 데이터를 수집 금방 실행되고 없어지는 것들은 pushgateway에 가지고 있다가 pull해서 데이터 수집 TSDB : Time Series DB : 시계열 데이터베이스 ; 시간대 별로 그래프가 그려져야하는 것들을 다룸 PromQL : prometheus 전용 query language 참고주소 > https://github.com/prometheus/prometheus Prometheus 설치 . 참고주소 > https://github.com/prometheus-operator/prometheus-operator prometheus 설치할 때에는 prometheus-operator로 설치 ! rook-ceph 설치할 때도 똑같았음. operator가 먼저 생성되고 operator가 구성요소들을 순차적으로 생성 원래 쿠버네티스는 선언형이라서 순서를 지정해서 뭘 만들기가 힘듬 그래서 operator를 이용하여 순차적으로 진행할 수 있도록 하는 것 operator는 operator SDK로 만듬 참고주소 > https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack ```sh # prometheus repo 추가 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts # repo update helm repo update # value.yaml 내용 확인 : 필요하면 수정 helm show values prometheus-community/kube-prometheus-stack > prom-value.yaml # prometheus 릴리즈 + 전용 namespace 구성 helm install monitor prometheus-community/kube-prometheus-stack --namespace prometheus --create-namespace # grafana를 loadbalancer로 upgrade rm prom-value.yaml # 아까 만든 prom-value.yaml 파일 지우고 다시 생성 vi prom-value.yaml grafana: service: type: LoadBalancer # upgrade helm upgrade -n prometheus -f prom-value.yaml monitor prometheus-community/kube-prometheus-stack # 접속 kubectl get all -n prometheus # grafana loadbalancer external-ip 확인 : 192.168.201.200 : chrome으로 접속 # id : admin # password : prom-operator # 맨 위에 home 버튼 누르면 general dashboard 선택 가능 ``` ECK operator 설치 . 참조주소 > https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-install-helm.html#k8s-install-helm ```sh helm repo add elastic https://helm.elastic.co helm repo update helm install eck elastic/eck-operator -n logging --create-namespace ``` Elasticsearch 설치 . 참조주소 > https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-deploy-elasticsearch.html ```sh apiVersion: elasticsearch.k8s.elastic.co/v1 kind: Elasticsearch metadata: name: elasticsearch namespace: logging spec: version: 7.12.1 nodeSets: - name: default count: 1 config: node.store.allow_mmap: false ``` > elasticsearch는 custom resource : crd를 이용하여 새로운 resource를 만든 것 Kibana . 참조 주소 > https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-deploy-kibana.html ```sh apiVersion: kibana.k8s.elastic.co/v1 kind: Kibana metadata: name: kibana namespace: logging spec: version: 7.12.1 count: 1 elasticsearchRef: name: elasticsearch http: service: spec: type: LoadBalancer ``` Filebeat . 참조 주소 > https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-beat-quickstart.html ```sh apiVersion: beat.k8s.elastic.co/v1beta1 kind: Beat metadata: name: filebeat namespace: logging spec: type: filebeat version: 7.12.1 elasticsearchRef: name: elasticsearch config: filebeat.inputs: - type: container paths: - /var/log/containers/*.log daemonSet: podTemplate: spec: dnsPolicy: ClusterFirstWithHostNet hostNetwork: true securityContext: runAsUser: 0 containers: - name: filebeat volumeMounts: - name: varlogcontainers mountPath: /var/log/containers - name: varlogpods mountPath: /var/log/pods - name: varlibdockercontainers mountPath: /var/lib/docker/containers volumes: - name: varlogcontainers hostPath: path: /var/log/containers - name: varlogpods hostPath: path: /var/log/pods - name: varlibdockercontainers hostPath: path: /var/lib/docker/containers ``` Elastic ID/PW . ID : elastic ```sh kubectl get secret -n logging elasticsearch-es-elastic-user -o yaml kubectl get secret -n logging elasticsearch-es-elastic-user -o jsonpath='{.data.elastic}' | base64 -d ``` address : https://x.x.x.x:5601/ - 메뉴 Analytics -> Discover - Create index patten 버튼 - step1: - index pattern name: \"filebeat-*\" - step2: - Time field: @timestamp - 메뉴 Analytics -> Discover ",
+    "url": "/docs/daily-learning-log/20210513.html",
+    "relUrl": "/docs/daily-learning-log/20210513.html"
   },"150": {
-    "doc": "Daily-learning-log",
-    "title": "Daily-learning-log",
-    "content": " ",
-    "url": "/docs/daily-learning-log/",
-    "relUrl": "/docs/daily-learning-log/"
+    "doc": "2021-05-13",
+    "title": "EKS",
+    "content": "- EKS - 관리형 쿠버네티스 : 사용자는 workernode만 관리 - AWS EKS : cluster 1개 시간당 $0.1 - Azure AKS - Google GKE - Oracle OKE - 설치형 쿠버네티스 : 사용자가 모두 관리 (master도) - kops - kubespray - kubeadm ",
+    "url": "/docs/daily-learning-log/20210513.html",
+    "relUrl": "/docs/daily-learning-log/20210513.html"
   },"151": {
+    "doc": "2021-05-13",
+    "title": "AWS EKS",
+    "content": "시작하는 방법 2가지 1. 콘솔 : EKS가 사용할 AWS상의 role을 따로 만들어줘야함 : 복잡! 2. eksctl eksctl로 AWS EKS 구성 . 참조 주소 > https://eksctl.io/ ```sh # awscli 설치 choco install awscli # aws-iam-authenticator 설치 choco install aws-iam-authenticator # ekscli 설치 choco install eksctl # kubectl 설치 choco install kubectl # aws 자격증명 설정 aws configure accesskey secretkey region: ap-northeast-2 # eks 클러스터 생성 eksctl create cluster \\ --name mycluster \\ --region ap-northeast-2 \\ --version 1.18 \\ --nodegroup-name mynodegroup \\ --nodes 3 \\ --managed # eks 클러스터 삭제 eksctl delete cluster mycluster ``` ",
+    "url": "/docs/daily-learning-log/20210513.html",
+    "relUrl": "/docs/daily-learning-log/20210513.html"
+  },"152": {
+    "doc": "2021-05-13",
+    "title": "2021-05-13",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210513.html",
+    "relUrl": "/docs/daily-learning-log/20210513.html"
+  },"153": {
+    "doc": "2021-05-14",
+    "title": "Kubernetes",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210514.html",
+    "relUrl": "/docs/daily-learning-log/20210514.html"
+  },"154": {
+    "doc": "2021-05-14",
+    "title": "AWS EKS",
+    "content": "node는 public에 배치하면 안됨!!!!! 무조건 private 기능 - Create, get, list and delete clusters - Create, drain and delete nodegroups - Scale a nodegroup - Update a cluster - Use custom AMIs - Configure VPC Networking - Configure access to API endpoints - Support for GPU nodegroups - Spot instances and mixed instances - IAM Management and Add-on Policies - List cluster Cloudformation stacks - Install coredns - Write kubeconfig file for a cluster ```sh eksctl create cluster \\ --name mycluster \\ --region ap-northeast-2 \\ --version 1.18 \\ --nodegroup-name mynodegroup \\ --nodes 3 \\ --managed eksctl get cluster eksctl get nodegroup --cluster mycluster ``` eks 예제 . ```sh apiVersion: eksctl.io/v1alpha5 kind: ClusterConfig metadata: name: mycluster region: us-east-1 version: \"1.18\" #AZ availabilityZones: [\"us-east-1a\", \"us-east-1b\", \"us-east-1c\", \"us-east-1d\"] # IAM OIDC & Service Account iam: withOIDC: true serviceAccounts: - metadata: name: aws-load-balancer-controller namespace: kube-system wellKnownPolicies: awsLoadBalancerController: true # Unmanaged Node Groups nodeGroups: # On-Demand Instance / Public Network / SSH - name: ng-1 instanceType: t2.small desiredCapacity: 1 availabilityZones: [\"us-east-1a\", \"us-east-1b\"] ssh: allow: true publicKeyPath: ./eks-key.pub # Spot Instances / Scaling / Private Network # IAM Policy: AutoScaler, ALB Ingress, CloudWatch, EBS - name: ng-spot-2 minSize: 1 desiredCapacity: 2 maxSize: 3 privateNetworking: true instancesDistribution: maxPrice: 0.01 instanceTypes: [\"t2.small\", \"t3.small\"] onDemandBaseCapacity: 0 onDemandPercentageAboveBaseCapacity: 0 spotInstancePools: 2 availabilityZones: [\"us-east-1c\", \"us-east-1d\"] iam: withAddonPolicies: autoScaler: true albIngress: true cloudWatch: true ebs: true # Mixed(On-Demand/Spot) Instances - name: ng-mixed-3 desiredCapacity: 2 instancesDistribution: maxPrice: 0.01 instanceTypes: [\"t2.small\", \"t3.small\"] onDemandBaseCapacity: 1 onDemandPercentageAboveBaseCapacity: 50 # Managed Node Groups managedNodeGroups: # On-Demand Instance - name: managed-ng-1 instanceType: t2.small desiredCapacity: 2 # Spot Instance - name: managed-ng-spot-2 instanceTypes: [\"t2.medium\", \"t3.medium\"] desiredCapacity: 1 spot: true # Fargate Profiles fargateProfiles: - name: fg-1 selectors: - namespace: dev labels: env: fargate # CloudWatch Logging cloudWatch: clusterLogging: enableTypes: [\"api\", \"scheduler\"] ``` ```sh cat myeks.yaml apiVersion: eksctl.io/v1alpha5 kind: ClusterConfig metadata: name: myeks region: ap-northeast-2 version: \"1.18\" # AZ availabilityZones: - ap-northeast-2a - ap-northeast-2b - ap-northeast-2c - ap-northeast-2d # IAM OIDC & Service Account iam: withOIDC: true serviceAccounts: - metadata: name: aws-load-balancer-controller namespace: kube-system wellKnownPolicies: awsLoadBalancerController: true - metadata: name: ebs-csi-controller-sa namespace: kube-system wellKnownPolicies: ebsCSIController: true - metadata: name: cluster-autoscaler namespace: kube-system wellKnownPolicies: autoScaler: true # Managed Node Groups managedNodeGroups: # On-Demand Instance - name: myng-1 instanceType: t3.medium minSize: 2 desiredCapacity: 3 maxSize: 4 privateNetworking: true #ssh: # allow: true # publicKeyPath: ./keypair/myeks.pub availabilityZones: - ap-northeast-2a - ap-northeast-2b - ap-northeast-2c - ap-northeast-2d iam: withAddonPolicies: autoScaler: true albIngress: true cloudWatch: true ebs: true # Fargate Profiles fargateProfiles: - name: fg-1 selectors: - namespace: dev labels: env: fargate # CloudWatch Logging cloudWatch: clusterLogging: enableTypes: - api - audit - authenticator - controllerManager - scheduler eksctl create cluster -f myeks.yaml eksctl create iamserviceaccount -f myeks.yaml --approve ``` Add-ons . Ingress Controller with ALB . 참조 주소 > https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html ```sh kubectl apply -k \"github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=master\" helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \\ --set clusterName=myeks \\ --set serviceAccount.create=false \\ --set serviceAccount.name=aws-load-balancer-controller \\ -n kube-system ``` EBS CSI Driver . 참조 주소 > https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html ```sh helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver helm repo update helm upgrade -install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver \\ --namespace kube-system \\ --set enableVolumeResizing=true \\ --set enableVolumeSnapshot=true \\ --set serviceAccount.controller.create=false \\ --set serviceAccount.controller.name=ebs-csi-controller-sa ``` Metrics Server . 참조 주소 > https://docs.amazonaws.cn/en_us/eks/latest/userguide/metrics-server.html ```sh kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml ``` Cluster Autoscaler . 참조 주소 > https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html ```sh curl -o cluster-autoscaler-autodiscover.yaml https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml # cluster-autoscaler-autodiscover.yaml 파일 수정 command: - ./cluster-autoscaler - --v=4 - --stderrthreshold=info - --cloud-provider=aws - --skip-nodes-with-local-storage=false - --expander=least-waste - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/ # = myeks kubectl create -f cluster-autoscaler-autodiscover.yaml kubectl -n kube-system logs -f deployment.apps/cluster-autoscaler ``` CloudWatch Container Insights . 참조 주소 > https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html ```sh ClusterName=myeks RegionName=ap-northeast-2 FluentBitHttpPort='2020' FluentBitReadFromHead='Off' [[ ${FluentBitReadFromHead} = 'On' ]] && FluentBitReadFromTail='Off'|| FluentBitReadFromTail='On' [[ -z ${FluentBitHttpPort} ]] && FluentBitHttpServer='Off' || FluentBitHttpServer='On' curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml | sed 's/{{cluster_name}}/'${ClusterName}'/;s/{{region_name}}/'${RegionName}'/;s/{{http_server_toggle}}/\"'${FluentBitHttpServer}'\"/;s/{{http_server_port}}/\"'${FluentBitHttpPort}'\"/;s/{{read_from_head}}/\"'${FluentBitReadFromHead}'\"/;s/{{read_from_tail}}/\"'${FluentBitReadFromTail}'\"/' | kubectl apply -f - kubectl get po -n amazon-cloudwatch # 결과 예시 NAME READY STATUS RESTARTS AGE cloudwatch-agent-gc5kc 1/1 Running 0 41m cloudwatch-agent-gqc42 1/1 Running 0 41m cloudwatch-agent-wqcgw 1/1 Running 0 41m fluent-bit-m8wph 1/1 Running 0 60m fluent-bit-ng45l 1/1 Running 0 60m fluent-bit-qvcgp 1/1 Running 0 60m ``` /aws/containerinsights//application /aws/containerinsights//dataplan /aws/containerinsights//host /aws/containerinsights//performance CloudWatch => Container Insights => 성능 모니터링 Resources . Service . ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: myapp spec: replicas: 2 selector: matchLabels: app: myapp template: metadata: labels: app: myapp spec: containers: - name: myweb image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 ``` ```sh apiVersion: v1 kind: Service metadata: name: mysvc spec: ports: - port: 80 targetPort: 8080 selector: app: myapp ``` https://aws.amazon.com/ko/elasticloadbalancing/features/ - CLB ```sh apiVersion: v1 kind: Service metadata: name: mysvc spec: type: LoadBalancer ports: - port: 80 targetPort: 8080 selector: app: myapp ``` - NLB (fargate pod는 반드시 nlb) ```sh apiVersion: v1 kind: Service metadata: name: mysvc annotations: service.beta.kubernetes.io/aws-load-balancer-type: nlb spec: type: LoadBalancer ports: - port: 80 targetPort: 8080 selector: app: myapp ``` - Internal LB ```sh apiVersion: v1 kind: Service metadata: name: mysvc annotations: service.beta.kubernetes.io/aws-load-balancer-type: nlb service.beta.kubernetes.io/aws-load-balancer-internal: \"true\" spec: type: LoadBalancer ports: - port: 80 targetPort: 8080 selector: app: myapp ``` Ingress . ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: myapp spec: replicas: 2 selector: matchLabels: app: myapp template: metadata: labels: app: myapp spec: containers: - name: myweb image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 ``` ```sh apiVersion: v1 kind: Service metadata: name: mysvc-np spec: type: NodePort ports: - port: 80 targetPort: 8080 nodePort: 30112 selector: app: myapp ``` ```sh apiVersion: networking.k8s.io/v1beta1 kind: Ingress metadata: name: myweb-ing #annotations: #kubernetes.io/ingress.class: alb #alb.ingress.kubernetes.io/scheme: internet-facing #alb.ingress.kubernetes.io/target-type: instance spec: rules: - http: paths: - path: backend: serviceName: mysvc-np servicePort: 80 ``` - kubernetes.io/ingress.class: alb - alb.ingress.kubernetes.io/scheme: internet-facing - internet-facing: 외부 연결 - internal(기본) - alb.ingress.kubernetes.io/target-type: instance - instance: EC2 nodeport - ip: Pod (Fargate) EBS CSI . ```sh kind: StorageClass apiVersion: storage.k8s.io/v1 metadata: name: ebs-sc annotations: storageclass.kubernetes.io/is-default-class: \"true\" provisioner: ebs.csi.aws.com volumeBindingMode: WaitForFirstConsumer reclaimPolicy: Delete parameters: csi.storage.k8s.io/fstype: ext4 type: gp3 ``` ```sh apiVersion: v1 kind: Pod metadata: name: myweb-pod labels: app: myweb-pod spec: containers: - name: web-server image: nginx:alpine volumeMounts: - name: web-content mountPath: /usr/share/nginx/html ports: - containerPort: 80 volumes: - name: web-content persistentVolumeClaim: claimName: myweb-pvc ``` ```sh apiVersion: v1 kind: PersistentVolumeClaim metadata: name: myweb-pvc spec: accessModes: - ReadWriteOnce resources: requests: storage: 1Gi storageClassName: ebs-sc ``` Cluster Autoscaler . ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: myweb-rs spec: replicas: 2 selector: matchLabels: app: myweb-rs template: metadata: labels: app: myweb-rs spec: containers: - name: myweb image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 resources: requests: memory: 512M limits: memory: 512M ``` Fargate . ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: myweb-rs namespace: dev spec: replicas: 2 selector: matchLabels: app: myweb-rs template: metadata: labels: app: myweb-rs env: fargate spec: containers: - name: myweb image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 ``` ```sh apiVersion: apps/v1 kind: ReplicaSet metadata: name: no-myweb-rs namespace: dev spec: replicas: 2 selector: matchLabels: app: myweb-rs template: metadata: labels: app: myweb-rs spec: containers: - name: myweb image: ghcr.io/c1t1d0s7/go-myweb ports: - containerPort: 8080 ``` RBAC (IAM계정) . - ClusterRole : view - IAM : eksview ```sh # ~/.aws/credentials 수정 [default] aws_access_key_id = A aws_secret_access_key = x [eksview] aws_access_key_id = A aws_secret_access_key = K aws configure list-profiles kubectl create clusterrolebinding eksview-read --clusterrole=view --user eksview kubectl get cm -n kube-system aws-auth kubectl get cm -n kube-system aws-auth -o yaml > aws-auth.yaml # aws-auth 파일 수정 data: mapUsers: | - userarn: arn:aws:iam::860981721775:user/eksview username: eksview groups: - view kubectl apply -f aws-auth.yaml # 사용자 전환 export AWS_PROFILE=eksview # 사용자 전환 - 윈도우 setx AWS_PROFILE eksview aws sts get-caller-identity ``` ",
+    "url": "/docs/daily-learning-log/20210514.html",
+    "relUrl": "/docs/daily-learning-log/20210514.html"
+  },"155": {
+    "doc": "2021-05-14",
+    "title": "2021-05-14",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210514.html",
+    "relUrl": "/docs/daily-learning-log/20210514.html"
+  },"156": {
+    "doc": "2021-05-17",
+    "title": "Git",
+    "content": "```sh # .git create git init # 가져오기 git clone # remote 보기, 만들기도 가능 뒤에 리모트 이름, 주소 작성 git remote # branch 확인 git branch # branch 만들기 git branch # branch 변경 git checkout # 가져오기 git fetch # fetch 뒤에, branch 여러 개면 병합하는 과정 필요 git merge # 가져오기 git pull ``` - Commit의 일반적인 규칙 - 기능 단위로 커밋 - 형식 단위로 커밋 - 여러가지를 같이 커밋 X ",
+    "url": "/docs/daily-learning-log/20210517.html",
+    "relUrl": "/docs/daily-learning-log/20210517.html"
+  },"157": {
+    "doc": "2021-05-17",
+    "title": "2021-05-17",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210517.html",
+    "relUrl": "/docs/daily-learning-log/20210517.html"
+  },"158": {
+    "doc": "2021-05-18",
+    "title": "Git",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210518.html",
+    "relUrl": "/docs/daily-learning-log/20210518.html"
+  },"159": {
+    "doc": "2021-05-18",
+    "title": "tag",
+    "content": "tag는 따로 push ```sh git push origin git push --tag : tag 전부 git clone -b : 특정 브랜치 지정 git rm -r --cached . git add. git commit -m \"커밋메세지\" git push origin {브랜치명} ``` ",
+    "url": "/docs/daily-learning-log/20210518.html",
+    "relUrl": "/docs/daily-learning-log/20210518.html"
+  },"160": {
+    "doc": "2021-05-18",
+    "title": "CI/CD",
+    "content": "Continuous Integration : 지속적 통합 - Jenkins, Circle CI, GitLab CI, Github Action, AWS CodeDeploy Continuous Deployment : 지속적 배포 Continuous Delivery : 지속적 제공 일반적으로 CI - Code 개발 -> Build -> Test -> Release Devops 관점에서 CI - Docker file 개발 -> Docker Build, Container Build -> Test -> Release > 굳이 따지면 Release는 Continuous Delivery 영역 Code -> Build -> Test -> Release -> Deploy Build : compile(실행파일 생성), packaging(tar), library/package 설치 - CI: Git, GitHub, Docker Hub - Git 저장소(프라이빗) - Application Django, Flask Web App - Dockerfile - Docker Hub Automated Build - Git 태그 기반으로, 컨테이너 태그 구성 - CD: ArgoCD - Git 저장소(프라이빗) - Kubernetes Manifest CI/CD 순서 1. App 개발 2. Dockerfile 3. git add/commit/push 4. docker build 5. docker push 6. Kubernetes Manifest 작성 / Helm Chart 작성 7. git add/commit/push 8. kubectl apply / helm install 참조 주소 > Docker Hub Automated Build : https://docs.docker.com/docker-hub/builds/ ",
+    "url": "/docs/daily-learning-log/20210518.html",
+    "relUrl": "/docs/daily-learning-log/20210518.html"
+  },"161": {
+    "doc": "2021-05-18",
+    "title": "Argo CD",
+    "content": "참조 주소 > https://argoproj.github.io/argo-cd/ ",
+    "url": "/docs/daily-learning-log/20210518.html",
+    "relUrl": "/docs/daily-learning-log/20210518.html"
+  },"162": {
+    "doc": "2021-05-18",
+    "title": "2021-05-18",
+    "content": " ",
+    "url": "/docs/daily-learning-log/20210518.html",
+    "relUrl": "/docs/daily-learning-log/20210518.html"
+  },"163": {
     "doc": "Joeunvit Study log",
     "title": "Joeunvit Study log",
     "content": "#### Python #### Network #### AWS #### MySQL #### Docker #### Ansible #### Kubernetes ",
     "url": "/docs/",
     "relUrl": "/docs/"
+  },"164": {
+    "doc": "Python-study",
+    "title": "Python study index page",
+    "content": " ",
+    "url": "/docs/python-study/",
+    "relUrl": "/docs/python-study/"
+  },"165": {
+    "doc": "Python-study",
+    "title": "Python-study",
+    "content": " ",
+    "url": "/docs/python-study/",
+    "relUrl": "/docs/python-study/"
+  },"166": {
+    "doc": "Daily-learning-log",
+    "title": "Daily learning log index page",
+    "content": " ",
+    "url": "/docs/daily-learning-log/",
+    "relUrl": "/docs/daily-learning-log/"
+  },"167": {
+    "doc": "Daily-learning-log",
+    "title": "Daily-learning-log",
+    "content": " ",
+    "url": "/docs/daily-learning-log/",
+    "relUrl": "/docs/daily-learning-log/"
   }
 }
