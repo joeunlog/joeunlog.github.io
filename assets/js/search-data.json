@@ -1019,34 +1019,52 @@
     "url": "/docs/daily-learning-log/20210521.html",
     "relUrl": "/docs/daily-learning-log/20210521.html"
   },"170": {
+    "doc": "AWS EKS semi project",
+    "title": "AWS EKS semi project",
+    "content": "# Subject ## AWS EKS cluster, wordpress, mysql, CI/CD, monitoring, logging ### 계속 업데이트 중 project repository address > [https://github.com/joeunlog/nginx-ubuntu](https://github.com/joeunlog/nginx-ubuntu) - AWS EKS cluster 구성 - addone 설치 - Wordpress-mySQL 구성 - CI/CD - Github - Dockerhub - Dockerhun automated build - ArgoCD - Monitoring - AWS CloudWatch - Logging - AWS CloudWatch ",
+    "url": "/docs/project/awseks-semiproject.html",
+    "relUrl": "/docs/project/awseks-semiproject.html"
+  },"171": {
     "doc": "Joeunvit Study log",
     "title": "Joeunvit Study log",
     "content": "#### python #### RDB #### VM #### Linux #### Web #### Network #### AWS #### Django #### Security #### Ansible #### Docker #### Kubernetes #### AWS EKS #### CI/CD ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"171": {
-    "doc": "Python-study",
-    "title": "Python study index page",
-    "content": " ",
-    "url": "/docs/python-study/",
-    "relUrl": "/docs/python-study/"
   },"172": {
-    "doc": "Python-study",
-    "title": "Python-study",
+    "doc": "Project",
+    "title": "Project index page",
     "content": " ",
-    "url": "/docs/python-study/",
-    "relUrl": "/docs/python-study/"
+    "url": "/docs/project/",
+    "relUrl": "/docs/project/"
   },"173": {
+    "doc": "Project",
+    "title": "Project",
+    "content": " ",
+    "url": "/docs/project/",
+    "relUrl": "/docs/project/"
+  },"174": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"174": {
+  },"175": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
+  },"176": {
+    "doc": "Python-study",
+    "title": "Python study index page",
+    "content": " ",
+    "url": "/docs/python-study/",
+    "relUrl": "/docs/python-study/"
+  },"177": {
+    "doc": "Python-study",
+    "title": "Python-study",
+    "content": " ",
+    "url": "/docs/python-study/",
+    "relUrl": "/docs/python-study/"
   }
 }
