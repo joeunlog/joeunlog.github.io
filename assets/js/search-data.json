@@ -1025,46 +1025,52 @@
     "url": "/docs/project/awseks-semiproject.html",
     "relUrl": "/docs/project/awseks-semiproject.html"
   },"171": {
+    "doc": "Final project",
+    "title": "Final project",
+    "content": "# Subject ```sh $ virtualenv venv $ source /venv/Scripts/activate ``` django에서 model을 선언할 때, primary key를 따로 지정하지 않으면 id가 default로 생성된다. ```py id = models.AutoField(primary_key=True) ``` pip install django-markdownx ## terraform aws configure 설정 ```sh $ aws configure ``` ```sh $ choco install terraform # 원하는 폴더에서 $ terraform init $ terraform fmt $ terraform validate $ terraform apply $ terraform show $ terraform destroy ``` kubectl이 작동하지 않았음 : kubectl을 configure 해야함 ```sh # configure kubectl aws eks update-kubeconfig --region ap-northeast-2 --name wikikube-cluster # outputs.tf에 region, cluster_name 선언이 되어 있어야 함 ``` kubectl describe configmap -n kube-system aws-auth cluster 권한 설정을 위한 사용자 추가 ```sh kubectl edit -n kube-system configmap/aws-auth # 예시 apiVersion: v1 data: mapRoles: | - rolearn: username: groups: - - mapUsers: | - userarn: username: groups: - ``` ### addon 설치 #### addon - lb ```sh kubectl apply -k \"github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=master\" helm repo add eks https://aws.github.io/eks-charts helm repo update helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \\ --set clusterName=wikikube-cluster \\ --set serviceAccount.create=true \\ --set serviceAccount.name=aws-load-balancer-controller \\ --set image.tag=v2.1.3 \\ -n kube-system # deploy가 안돼서 rs를 describe 해보니 service account가 없었음 # Error: unable to create iamserviceaccount(s) without IAM OIDC provider enabled ``` > https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html ```sh # OLDC provider 있는지 확인 aws eks describe-cluster --name wikikube-cluster --query \"cluster.identity.oidc.issuer\" --output text # output을 아래 command에 넣기 (https ~) aws iam list-open-id-connect-providers | grep https://oidc.eks.ap-northeast-2.amazonaws.com/id/E4F7031BF02A0829BC7235585646DCD6 # output이 없으면 새로운 oidc provider 생성 eksctl utils associate-iam-oidc-provider --cluster wikikube-cluster --approve ``` ```sh # 다시 service account 생성 시도하기 # eksctl create iamserviceaccount \\ # --name aws-load-balancer-controller \\ # --namespace kube-system \\ # --cluster test-eks-EV \\ # --attach-policy-arn arn:aws:iam::aws:policy/awsLoadBalancerController \\ # --approve \\ # --override-existing-serviceaccounts # oidc provider 만들고 시도했는데, override 부분에서 에러가 나는 것 같아서 해당 부분 지우고 시도하니까 sa는 생성됐음 # sa 생성했는데도 안돼서 설치할 때 sa 생성되도록 바꿈 -> 성공 !!!!!!!!!!!!!!!! helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \\ --set clusterName=wikikube-cluster \\ --set serviceAccount.create=true \\ --set serviceAccount.name=aws-load-balancer-controller \\ --set image.tag=v2.1.3 \\ -n kube-system ``` #### addon - ebs csi driver ```sh helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver helm repo update # lb 설치할 때처럼 sa를 만들게 바꿈 -> 성공 !!!!!!!!!! helm upgrade -install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver \\ --namespace kube-system \\ --set enableVolumeResizing=true \\ --set enableVolumeSnapshot=true \\ --set serviceAccount.controller.create=true \\ --set serviceAccount.controller.name=ebs-csi-controller-sa ``` #### addon - metrics server ```sh kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml ``` #### addon - cluster autoscaler ```sh curl -o cluster-autoscaler-autodiscover.yaml https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml # edit cluster-autoscaler-autodiscover.yaml # 에 cluster name 입력 kubectl create -f cluster-autoscaler-autodiscover.yaml ``` #### addon - cloudwatch container insights ```sh $ ClusterName=wikikube-cluster $ RegionName=ap-northeast-2 $ FluentBitHttpPort='2020' $ FluentBitReadFromHead='Off' $ [[ ${FluentBitReadFromHead} = 'On' ]] && FluentBitReadFromTail='Off'|| FluentBitReadFromTail='On' $ [[ -z ${FluentBitHttpPort} ]] && FluentBitHttpServer='Off' || FluentBitHttpServer='On' $ curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml | sed 's/{{cluster_name}}/'${ClusterName}'/;s/{{region_name}}/'${RegionName}'/;s/{{http_server_toggle}}/\"'${FluentBitHttpServer}'\"/;s/{{http_server_port}}/\"'${FluentBitHttpPort}'\"/;s/{{read_from_head}}/\"'${FluentBitReadFromHead}'\"/;s/{{read_from_tail}}/\"'${FluentBitReadFromTail}'\"/' | kubectl apply -f - ``` #### RDS db django migrate ```sh kubectl run test -it --rm --image=ubuntu:focal apt update apt install python3 apt install mysql-client apt install vim apt install pip pip install django apt-get install libmysqlclient-dev apt-get install libssl-dev pip install mysqlclient django-admin startproject dbmigrate cd dbmigrate python3 manage.py startapp k8sdoc cd dbmigrate # setting.py edit vi setting.py DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': 'wikikube-db', 'USER': 'admin', 'PASSWORD': 'wikikube1214', 'HOST': 'wikikube-db-1.ckaj95iexfk8.ap-northeast-2.rds.amazonaws.com', # AWS RDS endpoint } } ``` ``` from django.db import models from django.db.models.deletion import CASCADE, SET_DEFAULT from django.contrib.auth.models import User ``` # django에서 지원하는 User model 사용 # Create your models here. ``` class User(models.Model): user_id = models.CharField(max_length=200, null=False, primary_key=True) user_name = models.CharField(max_length=200, null=False) user_password = models.CharField(max_length=200, null=False) user_dob = models.DateTimeField(default=\"\", null=False) user_create_date = models.DateTimeField(auto_now_add=True, null=False) def __str__(self): return self.user_name ``` ### 게시글에 대한 작성자확인이 필요할까? 모든 게시글은 admin이 작성할 것인데 ``` class Post(models.Model): title = models.CharField(max_length=100, null=False) category = models.CharField(max_length=100, null=False) content = models.TextField(max_length=5000, null=False) # writer_id = models.ForeignKey(User, on_delete=SET_DEFAULT, default=\"\") post_time = models.DateTimeField(auto_now_add=True) # def __str__(self): # return str(self.id) class Comment(models.Model): # 고유번호는 comment.id로 참조 : id = models.AutoField(primary_key=True) comment_content = models.CharField(max_length=500, null=False) com_board_url = models.CharField(max_length=500, null=False) user_id = models.ForeignKey(User, on_delete=CASCADE, null=False) post_id = models.ForeignKey(Post, on_delete=CASCADE, null=False) # 게시글 고유번호 com_create_date = models.DateTimeField(auto_now_add=True, null=False) # def __str__(self): # return str(self.id) class Bookmark(models.Model): book_user = models.ForeignKey(User, on_delete=CASCADE, null=False) post_id = models.ForeignKey(Post, on_delete=CASCADE, null=True) # 게시글 고유번호 ``` Route 53 콘솔을 엽니다. 탐색 창에서 호스팅 영역을 선택합니다. 도메인에 대한 호스팅 영역을 선택합니다. 도메인에 대한 Route 53 별칭 레코드를 선택합니다. 레코드 세트 편집 창의 유형에서 IPv4 주소를 선택합니다. 별칭이 예로 설정되어 있는지 확인합니다. 적절한 Elastic Load Balancing 도메인 이름이 Alias Target으로 설정되어 있는지 확인합니다. 레코드 세트 저장을 선택합니다. kubectl set image deployment/wikikube -n cd wikikube-pod=kianjay/wikikube:v1.1 --record kubectl set image deployment/wikikube wikikube-pod=kianjay/wikikube:v1.1 --record ",
+    "url": "/docs/project/final-project.html",
+    "relUrl": "/docs/project/final-project.html"
+  },"172": {
     "doc": "Joeunvit Study log",
     "title": "Joeunvit Study log",
     "content": "#### python #### RDB #### VM #### Linux #### Web #### Network #### AWS #### Django #### Security #### Ansible #### Docker #### Kubernetes #### AWS EKS #### CI/CD ",
     "url": "/docs/",
     "relUrl": "/docs/"
-  },"172": {
-    "doc": "Project",
-    "title": "Project index page",
-    "content": " ",
-    "url": "/docs/project/",
-    "relUrl": "/docs/project/"
   },"173": {
-    "doc": "Project",
-    "title": "Project",
-    "content": " ",
-    "url": "/docs/project/",
-    "relUrl": "/docs/project/"
-  },"174": {
     "doc": "Daily-learning-log",
     "title": "Daily learning log index page",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"175": {
+  },"174": {
     "doc": "Daily-learning-log",
     "title": "Daily-learning-log",
     "content": " ",
     "url": "/docs/daily-learning-log/",
     "relUrl": "/docs/daily-learning-log/"
-  },"176": {
-    "doc": "Python-study",
+  },"175": {
+    "doc": "Python",
     "title": "Python study index page",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
-  },"177": {
-    "doc": "Python-study",
-    "title": "Python-study",
+  },"176": {
+    "doc": "Python",
+    "title": "Python",
     "content": " ",
     "url": "/docs/python-study/",
     "relUrl": "/docs/python-study/"
+  },"177": {
+    "doc": "PROJECT",
+    "title": "Project index page",
+    "content": " ",
+    "url": "/docs/project/",
+    "relUrl": "/docs/project/"
+  },"178": {
+    "doc": "PROJECT",
+    "title": "PROJECT",
+    "content": " ",
+    "url": "/docs/project/",
+    "relUrl": "/docs/project/"
   }
 }
